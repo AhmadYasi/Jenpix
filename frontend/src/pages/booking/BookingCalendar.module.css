@@ -1,0 +1,635 @@
+/* ═══════════════════════════════════════════
+   BOOKING SECTION WRAPPER
+═══════════════════════════════════════════ */
+.bookingSection {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 2px solid #eee;
+}
+
+.bookingSectionTitle {
+  font-size: 26px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.bookingSectionSub {
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  color: #888;
+  margin-bottom: 36px;
+}
+
+/* ═══════════════════════════════════════════
+   STEP INDICATOR  — stretches full width
+═══════════════════════════════════════════ */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/* Each stepItem = circle+label + connecting line, takes equal share */
+.stepItem {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* Last item has no line so it shouldn't grow the line part */
+.stepItem:last-child {
+  flex: 0 0 auto;
+}
+
+.stepLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.stepCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  color: #ccc;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  background-color: #fff;
+}
+
+.stepCircleActive {
+  border-color: #8ab832;
+  background-color: #8ab832;
+  color: #fff;
+}
+
+.stepCircleDone {
+  border-color: #8ab832;
+  background-color: #fff;
+  color: #8ab832;
+}
+
+.stepLabel {
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+  color: #aaa;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.stepLabelActive { color: #8ab832; font-weight: 700; }
+.stepLabelDone   { color: #555; }
+
+/* The line grows to fill all remaining space in the stepItem */
+.stepLine {
+  flex: 1;
+  height: 2px;
+  background-color: #e0e0e0;
+  margin: 0 12px;
+  transition: background-color 0.3s;
+  min-width: 40px;
+}
+
+.stepLineDone { background-color: #8ab832; }
+
+/* ═══════════════════════════════════════════
+   STEP 1 — ROOM GRID
+═══════════════════════════════════════════ */
+.roomGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.roomCard {
+  border: 2px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  background: #fff;
+}
+
+.roomCard:hover {
+  border-color: #8ab832;
+  box-shadow: 0 4px 16px rgba(138, 184, 50, 0.15);
+  transform: translateY(-2px);
+}
+
+.roomCardSelected {
+  border-color: #8ab832;
+  box-shadow: 0 4px 20px rgba(138, 184, 50, 0.25);
+}
+
+.roomCardImg  { width: 100%; height: 160px; object-fit: cover; display: block; }
+.roomCardBody { padding: 14px 16px; }
+
+.roomCardName {
+  font-size: 15px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.roomCardSelected .roomCardName { color: #8ab832; }
+
+.roomCardDesc {
+  font-size: 12.5px;
+  font-family: 'Arial', sans-serif;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.roomCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roomCardPrice    { font-size: 14px; font-family: 'Arial', sans-serif; color: #8ab832; font-weight: 700; }
+.roomCardPriceSub { font-size: 11px; color: #aaa; font-weight: 400; }
+.roomCardGuests   { font-size: 12px; font-family: 'Arial', sans-serif; color: #888; }
+
+.selectedBadge {
+  display: inline-block;
+  background-color: #8ab832;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   STEP NAV BUTTONS
+═══════════════════════════════════════════ */
+.stepActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  gap: 12px;
+}
+
+.btnBack {
+  background: none;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btnBack:hover { border-color: #8ab832; color: #8ab832; }
+
+.btnNext {
+  background-color: #8ab832;
+  border: none;
+  border-radius: 4px;
+  padding: 11px 28px;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-left: auto;
+}
+
+.btnNext:hover    { background-color: #79a428; }
+.btnNext:disabled { background-color: #ccc; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════
+   STEP 2 — CALENDAR
+═══════════════════════════════════════════ */
+.calendarWrapper { display: flex; flex-direction: column; gap: 20px; }
+
+.calendarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendarNav {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #555;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.calendarNav:hover { border-color: #8ab832; color: #8ab832; }
+
+.calendarMonths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.calendarMonthTitle {
+  font-size: 16px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #222;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.calendarWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.calendarWeekday {
+  text-align: center;
+  font-size: 11px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendarDay {
+  text-align: center;
+  padding: 7px 2px;
+  font-size: 12.5px;
+  font-family: 'Arial', sans-serif;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+  color: #333;
+  border: none;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.calendarDay:hover:not(.dayUnavailable):not(.dayPast):not(.dayEmpty) {
+  background-color: #f0f7e0;
+}
+
+.dayEmpty     { cursor: default; pointer-events: none; }
+.dayPast      { color: #ccc; cursor: not-allowed; }
+.dayUnavailable { background-color: #fff0f0; color: #e08080; cursor: not-allowed; text-decoration: line-through; }
+.dayInRange   { background-color: #e8f5c8; border-radius: 0; }
+.daySelected  { background-color: #8ab832 !important; color: #fff !important; border-radius: 4px; font-weight: 700; }
+.dayRangeStart { border-radius: 4px 0 0 4px !important; }
+.dayRangeEnd  { border-radius: 0 4px 4px 0 !important; }
+
+.dayPrice { font-size: 9px; color: #8ab832; font-weight: 600; margin-top: 2px; }
+.daySelected .dayPrice { color: #d4f08a; }
+.dayInRange .dayPrice  { color: #6a9020; }
+
+.calendarLegend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: 'Arial', sans-serif;
+  color: #666;
+}
+
+.legendDot         { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+.legendAvailable   { background-color: #fff; border: 1px solid #ccc; }
+.legendUnavailable { background-color: #fff0f0; border: 1px solid #e08080; }
+.legendSelected    { background-color: #8ab832; }
+.legendInRange     { background-color: #e8f5c8; border: 1px solid #c5e080; }
+
+.rangeSummary {
+  background-color: #f4f8e8;
+  border: 1px solid #c8de80;
+  border-radius: 6px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.rangeSummaryText        { font-size: 14px; font-family: 'Arial', sans-serif; color: #444; }
+.rangeSummaryText strong { color: #222; }
+.rangeSummaryTotal       { font-size: 20px; font-family: 'Georgia', serif; font-weight: 700; color: #8ab832; }
+.rangeSummaryNights      { font-size: 12px; color: #888; font-family: 'Arial', sans-serif; }
+
+/* ═══════════════════════════════════════════
+   STEP 3 — TWO COLUMN LAYOUT
+═══════════════════════════════════════════ */
+.step3Layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ── STAY BAR ── */
+.stayBar {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 14px 20px;
+  gap: 0;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stayBarItem   { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 80px; }
+.stayBarLabel  { font-size: 10px; font-family: 'Arial', sans-serif; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
+.stayBarValue  { font-size: 13px; font-family: 'Arial', sans-serif; font-weight: 600; color: #333; }
+.stayBarDivider { width: 1px; height: 36px; background-color: #e0e0e0; margin: 0 8px; flex-shrink: 0; }
+
+.stayBarChange {
+  background: none;
+  border: 1px solid #8ab832;
+  border-radius: 4px;
+  color: #8ab832;
+  font-size: 12px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, color 0.2s;
+  margin-left: auto;
+}
+.stayBarChange:hover { background-color: #8ab832; color: #fff; }
+
+/* ── FORM ── */
+.formTitle {
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.formGroup { margin-bottom: 18px; }
+
+.formLabel {
+  display: block;
+  font-size: 13px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.required { color: #e05050; }
+
+.formInput,
+.formSelect {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  outline: none;
+  border-color: #8ab832;
+  box-shadow: 0 0 0 3px rgba(138, 184, 50, 0.12);
+}
+
+.formSelect {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.formTextarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.formTextarea:focus {
+  outline: none;
+  border-color: #8ab832;
+  box-shadow: 0 0 0 3px rgba(138, 184, 50, 0.12);
+}
+
+.inputError { border-color: #e05050 !important; }
+.errorMsg   { font-size: 12px; font-family: 'Arial', sans-serif; color: #e05050; margin-top: 4px; }
+
+.btnConfirm {
+  display: block;
+  width: 100%;
+  background-color: #8ab832;
+  border: none;
+  border-radius: 4px;
+  padding: 14px;
+  font-size: 15px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+.btnConfirm:hover { background-color: #79a428; }
+
+/* ── BOOKING SUMMARY BOX ── */
+.summaryBox {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 22px;
+  background-color: #fafafa;
+  position: sticky;
+  top: 90px;
+}
+
+.summaryTitle {
+  font-size: 16px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 14px;
+}
+
+.summaryImg {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.summarySection { margin-bottom: 4px; }
+
+.summaryLabel {
+  font-size: 11px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.summaryValue  { font-size: 14px; font-family: 'Arial', sans-serif; font-weight: 600; color: #222; }
+.summaryMeta   { font-size: 12px; font-family: 'Arial', sans-serif; color: #888; margin-top: 2px; }
+
+.summaryHighlights {
+  list-style: none;
+  margin: 6px 0 0 0;
+  padding: 0;
+}
+
+.summaryHighlights li {
+  font-size: 12px;
+  font-family: 'Arial', sans-serif;
+  color: #666;
+  padding: 2px 0;
+}
+
+.summaryHighlights li::before { content: "– "; color: #8ab832; }
+
+.summaryDivider { height: 1px; background-color: #eee; margin: 14px 0; }
+
+.breakdownList { margin-top: 6px; }
+
+.breakdownRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-family: 'Arial', sans-serif;
+  color: #555;
+  padding: 3px 0;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  color: #222;
+}
+
+.summaryTotalPrice {
+  font-size: 22px;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: #8ab832;
+}
+
+.summaryVat {
+  font-size: 11px;
+  font-family: 'Arial', sans-serif;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+.trustBadge {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.trustIcon  { font-size: 18px; flex-shrink: 0; line-height: 1.3; }
+.trustTitle { font-size: 13px; font-family: 'Arial', sans-serif; font-weight: 600; color: #333; }
+.trustSub   { font-size: 11px; font-family: 'Arial', sans-serif; color: #888; margin-top: 1px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — TABLET  (≤ 900px)
+═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .calendarMonths { grid-template-columns: 1fr; gap: 24px; }
+  .roomGrid       { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .step3Layout    { grid-template-columns: 1fr; gap: 28px; }
+  .summaryBox     { position: static; }
+  .summaryCol     { order: -1; }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 640px)
+═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .bookingSectionTitle { font-size: 20px; }
+
+  .stepLabel  { display: none; }
+  .stepLine   { margin: 0 6px; min-width: 20px; }
+
+  .roomGrid   { grid-template-columns: 1fr; }
+
+  .stayBar        { gap: 6px; }
+  .stayBarDivider { display: none; }
+  .stayBarChange  { width: 100%; text-align: center; margin-left: 0; }
+
+  .rangeSummary   { flex-direction: column; align-items: flex-start; }
+
+  .stepActions    { flex-direction: column-reverse; }
+  .btnNext, .btnBack { width: 100%; text-align: center; margin-left: 0; }
+
+  .summaryImg { height: 120px; }
+}
