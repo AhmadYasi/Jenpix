@@ -5,7 +5,7 @@ import styles from "./Nav.module.css";
 
 const NAV_ITEMS = [
   { label: "Willkommen", path: "/" },
-  { label: "Zimmer \u25BE",   path: "/zimmer" },
+ { label: "Zimmer \u25BE", path: "/hotelzimmer" },,
   { label: "Radebeul \u25BE", path: "/radebeul" },
   { label: "Anfahrt",    path: "/anfahrt" },
   { label: "Buchen",     path: "/buchen" },

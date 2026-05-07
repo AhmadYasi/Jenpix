@@ -2,15 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
 import { IMAGES, SLIDES } from "./constants";
-import Nav from "../../components/Nav";
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
 
   return (
     <div className={styles.page}>
-      <Nav />
-
       <main className={styles.main}>
         <div className={styles.twoCol}>
 
@@ -64,7 +61,7 @@ export default function HomePage() {
                   praktischen Familienzimmern finden Sie sicher die perfekte Unterkunft
                   für Ihren Urlaub in Radebeul.
                 </p>
-                <Link to="/buchen" className={styles.greenLink}>Unsere Hotelzimmer →</Link>
+                <Link to="/hotelzimmer" className={styles.greenLink}>Unsere Hotelzimmer →</Link>
               </div>
             </div>
 
@@ -98,21 +95,21 @@ export default function HomePage() {
           {/* ── RIGHT COLUMN ── */}
           <div>
             <div className={styles.hostsBox}>
-              <h2 className={styles.hostsH2}>Your hosts</h2>
+              <h2 className={styles.hostsH2}>Ihre Gastgeber</h2>
               <img src={IMAGES.hosts} alt="Gundel und Mathias Woite" className={styles.hostsImg} />
-              <h3 className={styles.hostsH3}>Welcome to Hotel Villa Elbling!</h3>
-              <p className={styles.hostsP}>We are Gundel and Mathias Woite.</p>
+              <h3 className={styles.hostsH3}>Herzlich Willkommen im Hotel Villa Elbling!</h3>
+              <p className={styles.hostsP}>Wir sind Gundel und Mathias Woite.</p>
               <p className={styles.hostsP}>
-                In 2024, we bought the old villa and completely renovated it ourselves.
-                We welcome you to our unique boutique hotel at the foot of the vineyards,
-                right next to Wackerbarth Castle.
+                2024 haben wir die alte Villa gekauft und komplett in Eigenleistung saniert.
+                Wir begrüßen Sie in unserem individuellen Boutique Hotel am Fuße der Weinberge
+                direkt neben Schloss Wackerbarth.
               </p>
               <p className={styles.hostsP}>
-                Discover our lovingly designed rooms – perfect for your getaway in
-                Radebeul. We're not a run-of-the-mill hotel, but a home away from home.
+                Entdecken Sie unsere liebevoll gestalteten Zimmer – perfekt für Ihre Auszeit
+                in Radebeul. Wir sind kein Hotel von der Stange, sondern ein Zuhause auf Zeit.
               </p>
-              <p className={styles.hostsP}>We look forward to seeing you!</p>
-              <p className={styles.hostsSignature}>The Woite Family</p>
+              <p className={styles.hostsP}>Wir freuen uns auf Sie!</p>
+              <p className={styles.hostsSignature}>Ihre Familie Woite</p>
 
               <div className={styles.awardsRow}>
                 <img src={IMAGES.bookingAward} alt="Booking.com Traveller Review Awards 2026" className={styles.awardImg} />
@@ -139,46 +136,31 @@ export default function HomePage() {
                   <div className={styles.badgeLabel}>verified by Trustindex</div>
                 </div>
               </div>
-              <p className={styles.badgeLabelCenter}>Top rated on Booking and Google</p>
+              <p className={styles.badgeLabelCenter}>Top bewertet bei Booking und Google</p>
             </div>
 
             <div className={styles.guestInfo}>
-              <h2 className={styles.guestH2}>Guest Information</h2>
-              <p className={styles.guestRow}><span className={styles.guestBold}>We serve breakfast</span> from 8 to 10 a.m.</p>
-              <p className={styles.guestRow}><span className={styles.guestBold}>Arrival</span> is possible from 2:30 pm. Please let us know your arrival time. For arrivals after 5:30 pm, we will leave your key in the key safe.</p>
-              <p className={styles.guestRow}><span className={styles.guestBold}>Departure</span> is possible until 11 a.m.</p>
-              <p className={styles.guestRow}><span className={styles.guestBold}>Free parking</span> is available.</p>
+              <h2 className={styles.guestH2}>Gäste-Informationen</h2>
+              <p className={styles.guestRow}><span className={styles.guestBold}>Frühstück</span> servieren wir von 8 bis 10 Uhr.</p>
+              <p className={styles.guestRow}><span className={styles.guestBold}>Anreise</span> ist ab 14:30 Uhr möglich. Bitte teilen Sie uns Ihre Anreisezeit mit. Für Anreisen nach 17:30 Uhr deponieren wir Ihren Schlüssel im Schlüsselsafe.</p>
+              <p className={styles.guestRow}><span className={styles.guestBold}>Abreise</span> ist bis 11 Uhr möglich.</p>
+              <p className={styles.guestRow}><span className={styles.guestBold}>Parkplätze</span> stehen kostenfrei zur Verfügung.</p>
             </div>
 
             <div className={styles.contactBox}>
-              <h2 className={styles.contactH2}>contact</h2>
-              <p className={styles.contactP}>Phone: 0173/8848118</p>
-              <p className={styles.contactP}>Email: info@hotel-villa-elbling.de</p>
-              <p className={styles.contactP}>Address: Meißner Straße 326, 01445 Radebeul</p>
+              <h2 className={styles.contactH2}>Kontakt</h2>
+              <p className={styles.contactP}>Telefon: 0173/8848118</p>
+              <p className={styles.contactP}>E-Mail: info@hotel-villa-elbling.de</p>
+              <p className={styles.contactP}>Anfahrt: Meißner Straße 326, 01445 Radebeul</p>
               <div className={styles.contactLinks}>
-                <button className={styles.contactLink}>Legal Notice</button>
-                <button className={styles.contactLink}>Terms and Conditions</button>
+                <button className={styles.contactLink}>Impressum</button>
+                <button className={styles.contactLink}>AGB</button>
               </div>
             </div>
           </div>
 
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <div>
-          <h4 className={styles.footerH4}>Villa Elbling Radebeul</h4>
-          <p className={styles.footerP}>Ihr Boutique-Hotel am Fuße der Weinberge direkt neben Schloss Wackerbarth in Radebeul.</p>
-          <p className={styles.footerCopyright}>Copyright © 2026</p>
-        </div>
-        <div>
-          <img src="https://img.icons8.com/ios/50/ffffff/checked--v1.png" alt="Certified Safe" className={styles.footerBadgeImg} />
-          <p className={styles.footerCertified}>Certified safe<br />verified by Trustindex</p>
-        </div>
-        <div>
-          <img src={IMAGES.traumwohnen} alt="Bekannt aus Traumwohnen" className={styles.footerTraumImg} />
-        </div>
-      </footer>
     </div>
   );
 }
