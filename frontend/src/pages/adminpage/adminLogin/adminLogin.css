@@ -1,0 +1,503 @@
+/* ============================================================
+   Villa Elbling – AdminLogin.css
+   Matches the admin login page design from screenshot
+   ============================================================ */
+
+/* ── CSS Variables (shared palette with HomePage) ──────────── */
+:root {
+  --green:       #7ab022;
+  --green-dark:  #5e8a14;
+  --text:        #333;
+  --muted:       #777;
+  --border:      #ddd;
+  --bg-light:    #f5f5f0;
+  --white:       #fff;
+  --font-body:   "Georgia", serif;
+  --font-ui:     "Helvetica Neue", Arial, sans-serif;
+  --radius:      6px;
+  --card-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+a   { color: var(--green); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { display: block; max-width: 100%; }
+
+/* ── Root ──────────────────────────────────────────────────── */
+.al-root {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/* ── NAVIGATION ────────────────────────────────────────────── */
+.al-nav {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.al-nav__logo-link {
+  display: block;
+  padding: 14px 0;
+  min-width: 160px;
+  text-decoration: none;
+}
+.al-nav__logo-link:hover { text-decoration: none; }
+
+.al-nav__logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.al-nav__logo-name {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+.al-nav__logo-sub {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.al-nav__links {
+  display: flex;
+  align-items: stretch;
+  list-style: none;
+  flex: 1;
+  margin-left: 16px;
+}
+.al-nav__link {
+  display: flex;
+  align-items: center;
+  padding: 20px 16px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+.al-nav__link:hover { background: var(--bg-light); text-decoration: none; }
+.al-nav__link--active { background: var(--green); color: var(--white); }
+.al-nav__link--btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+.al-nav__hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: auto;
+  color: var(--text);
+}
+
+/* ── BREADCRUMB ────────────────────────────────────────────── */
+.al-breadcrumb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  background: var(--bg-light);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.al-breadcrumb__path a { color: var(--green); }
+.al-breadcrumb__sep { color: var(--muted); margin: 0 4px; }
+
+/* ── HERO (background image + login card) ─────────────────── */
+.al-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 540px;
+  background-size: cover;
+  background-position: center;
+  padding: 60px 24px;
+  flex: 1;
+}
+.al-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+/* ── LOGIN CARD ────────────────────────────────────────────── */
+.al-card {
+  position: relative;
+  z-index: 1;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 40px 44px 36px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Logo inside card */
+.al-card__logo {
+  margin-bottom: 20px;
+}
+.al-card__logo-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #b5cfa0;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  justify-content: center;
+  padding: 12px;
+  gap: 2px;
+}
+.al-card__logo-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: #3a5c1a;
+  letter-spacing: 1.5px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.al-card__logo-sub {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  color: #7ab022;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.al-card__title {
+  font-family: var(--font-body);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  text-align: center;
+}
+.al-card__subtitle {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* Error message */
+.al-card__error {
+  width: 100%;
+  background: #fff0f0;
+  border: 1px solid #f5c6c6;
+  border-radius: var(--radius);
+  color: #c0392b;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ── FORM ──────────────────────────────────────────────────── */
+.al-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.al-form__field {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.al-form__field:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(122, 176, 34, 0.12);
+}
+
+.al-form__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.al-form__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 13px 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background: transparent;
+}
+.al-form__input::placeholder { color: #bbb; }
+
+.al-form__eye {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  color: #aaa;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+.al-form__eye:hover { color: var(--green); }
+
+/* Remember me + forgot password row */
+.al-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2px 0;
+}
+.al-form__remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+.al-form__remember input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  accent-color: var(--green);
+}
+.al-form__forgot {
+  background: none;
+  border: none;
+  color: var(--green);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+.al-form__forgot:hover { color: var(--green-dark); text-decoration: underline; }
+
+/* Submit button */
+.al-form__submit {
+  width: 100%;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 15px;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+.al-form__submit:hover:not(:disabled) {
+  background: var(--green-dark);
+  transform: translateY(-1px);
+}
+.al-form__submit:disabled { opacity: 0.7; cursor: not-allowed; }
+.al-form__submit--loading { pointer-events: none; }
+
+/* Loading spinner */
+.al-form__spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: al-spin 0.7s linear infinite;
+}
+@keyframes al-spin { to { transform: rotate(360deg); } }
+
+/* ── SECURITY NOTE ─────────────────────────────────────────── */
+.al-security {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 24px 40px;
+  gap: 12px;
+  background: var(--white);
+}
+.al-security__icon {
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.al-security__text {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  text-align: center;
+  max-width: 460px;
+}
+
+/* ── FOOTER ────────────────────────────────────────────────── */
+.al-footer {
+  background: #2b2b2b;
+  color: #ccc;
+  padding: 40px 24px 20px;
+}
+.al-footer__grid {
+  max-width: 1080px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.al-footer__brand h4 {
+  color: var(--white);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.al-footer__brand-line {
+  width: 40px;
+  height: 2px;
+  background: var(--green);
+  margin-bottom: 12px;
+}
+.al-footer__brand p {
+  font-size: 13px;
+  max-width: 240px;
+  line-height: 1.6;
+}
+.al-footer__badges {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.al-footer__certified {
+  background: var(--white);
+  color: #333;
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.al-footer__certified-check { font-size: 16px; }
+.al-footer__wohnen {
+  background: var(--white);
+  color: #333;
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  text-align: center;
+  border: 2px solid #ddd;
+}
+.al-footer__wohnen-top {
+  font-size: 7px;
+  letter-spacing: 0.5px;
+  color: #888;
+}
+.al-footer__wohnen strong { font-size: 11px; color: #333; line-height: 1.3; }
+
+.al-footer__copy {
+  max-width: 1080px;
+  margin: 0 auto;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: #888;
+  border-top: 1px solid #444;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.al-footer__scroll-top {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--green);
+  background: none;
+  color: var(--green);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.al-footer__scroll-top:hover { background: var(--green); color: var(--white); }
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .al-nav__hamburger { display: block; }
+  .al-nav__links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    z-index: 200;
+  }
+  .al-nav__links--open { display: flex; }
+}
+
+@media (max-width: 520px) {
+  .al-card { padding: 28px 20px 24px; }
+  .al-hero { padding: 40px 16px; min-height: 460px; }
+  .al-topbar__contact { flex-direction: column; gap: 2px; }
+  .al-footer__badges { flex-wrap: wrap; justify-content: center; }
+}

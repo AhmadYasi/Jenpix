@@ -1,10 +1,10 @@
-import Nav from "../../components/Nav";
+
 import styles from "../home/HomePage.module.css";
 
 export default function RadebulPage() {
   return (
     <div className={styles.page}>
-      <Nav />
+      
 
       <main className={styles.main}>
         <div className={styles.twoCol}>

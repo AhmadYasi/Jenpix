@@ -1,0 +1,196 @@
+/* ============================================================
+   Villa Elbling – AdminSidebar.css
+   Reusable sidebar used across all admin pages
+   ============================================================ */
+
+:root {
+  --sidebar-width:           240px;
+  --sidebar-collapsed-width:  68px;
+  --sidebar-bg:    #2c2c2c;
+  --sidebar-text:  #e0e0e0;
+  --sidebar-muted: #888;
+  --sidebar-gold:  #c9a96e;
+  --sidebar-active-bg:   #7ab022;
+  --sidebar-active-text: #fff;
+  --sidebar-hover-bg:    rgba(255,255,255,0.07);
+  --sidebar-transition:  0.25s ease;
+  --green: #7ab022;
+}
+
+/* ── Sidebar shell ─────────────────────────────────────────── */
+.as-sidebar {
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0;
+  transition: width var(--sidebar-transition);
+  overflow: hidden;
+}
+.as-sidebar--collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* ── Logo ──────────────────────────────────────────────────── */
+.as-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  min-height: 82px;
+}
+.as-logo__circle { flex-shrink: 0; }
+.as-logo__text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.as-logo__name {
+  font-family: "Georgia", serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sidebar-gold);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+.as-logo__sub {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 9px;
+  color: var(--sidebar-muted);
+  white-space: nowrap;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* ── Nav ───────────────────────────────────────────────────── */
+.as-nav { padding: 12px 0; flex: 1; }
+.as-nav__list { list-style: none; }
+
+.as-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 18px;
+  border: none;
+  background: none;
+  color: var(--sidebar-text);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--sidebar-transition), color var(--sidebar-transition);
+  white-space: nowrap;
+  border-radius: 0;
+}
+.as-nav__item:hover {
+  background: var(--sidebar-hover-bg);
+  color: #fff;
+}
+.as-nav__item--active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  font-weight: 600;
+}
+.as-nav__item--active:hover {
+  background: #5e8a14;
+}
+
+.as-nav__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+}
+.as-nav__label { overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Divider ───────────────────────────────────────────────── */
+.as-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 4px 0;
+}
+
+/* ── Logout ────────────────────────────────────────────────── */
+.as-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 18px;
+  border: none;
+  background: none;
+  color: var(--sidebar-text);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--sidebar-transition), color var(--sidebar-transition);
+}
+.as-logout:hover {
+  background: var(--sidebar-hover-bg);
+  color: #ff8a80;
+}
+
+/* ── Villa illustration ────────────────────────────────────── */
+.as-villa {
+  padding: 20px 16px 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.as-villa__illustration svg {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  opacity: 0.7;
+}
+.as-villa__name {
+  font-family: "Georgia", serif;
+  font-size: 12px;
+  color: var(--sidebar-gold);
+  text-align: center;
+  font-weight: 600;
+}
+.as-villa__desc {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  color: var(--sidebar-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── Collapse toggle button ────────────────────────────────── */
+.as-collapse-btn {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-muted);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s, color 0.2s;
+  line-height: 1;
+}
+.as-collapse-btn:hover {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
