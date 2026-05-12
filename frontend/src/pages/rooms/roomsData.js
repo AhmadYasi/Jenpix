@@ -1,3 +1,67 @@
+// ─────────────────────────────────────────────
+//  Image imports (from local assets folder)
+// ─────────────────────────────────────────────
+
+// Gutedel
+import gutedelHero1   from "../../assets/Schlafbereich-Weddingsuite-1024x768.jpg";
+import gutedelHero2   from "../../assets/Wohnbereich-mit-Kamin-Hochzeitssuite-1024x683.jpg";
+
+// Bacchus
+import bacchusHero1   from "../../assets/Hotel-Villa-Elbling-Radebeul-Bacchus-Bild-vom-Bett-768x1024.jpg";
+import bacchusHero2   from "../../assets/Hotel-Villa-Elbling-Radebeul-Bacchus-Sitzecke-768x1024.jpg";
+import bacchusHero3   from "../../assets/Hotel-Villa-Elbling-Radebeul-Badezimmer-Bacchus-mit-Wanne-768x1024.jpg";
+import bacchusGal1    from "../../assets/Hotel-Villa-Elbling-Radebeul-Schriftzug-Bacchus-1024x768.jpg";
+import bacchusGal2    from "../../assets/Hotel-Villa-Elbling-Radebeul-Sitzecke-Doppelzimmer-Bacchus-quer-1024x768.jpg";
+
+// Riesling
+import rieslingHero1  from "../../assets/20241213_145846-1024x577.jpg";
+import rieslingHero2  from "../../assets/20241213_145919-1024x577.jpg";
+import rieslingGal1   from "../../assets/20241213_134314-1024x577.jpg";
+import rieslingGal2   from "../../assets/20241213_135406-1-1024x577.jpg";
+import rieslingGal3   from "../../assets/20241213_134608-577x1024.jpg";
+import rieslingGal4   from "../../assets/20241213_135337-577x1024.jpg";
+import rieslingGal5   from "../../assets/20241213_145851-2-577x1024.jpg";
+
+// Scheurebe
+import scheurebeHero1 from "../../assets/20241129_104444-1024x577.jpg";
+import scheurebeHero2 from "../../assets/20241129_104618-1024x577.jpg";
+import scheurebeGal1  from "../../assets/20241129_104513-577x1024.jpg";
+import scheurebeGal2  from "../../assets/20241129_104545-1024x577.jpg";
+import scheurebeGal3  from "../../assets/20241129_104633-577x1024.jpg";
+
+// Burgunder
+import burgunderHero1 from "../../assets/20250417_094304-1024x577.jpg";
+import burgunderHero2 from "../../assets/20250417_094404-1024x577.jpg";
+import burgunderGal1  from "../../assets/20250417_094347-4-577x1024.jpg";
+import burgunderGal2  from "../../assets/20250417_094537-2-577x1024.jpg";
+import burgunderGal3  from "../../assets/20250417_094326-577x1024.jpg";
+import burgunderGal4  from "../../assets/20250417_094457-5-1024x577.jpg";
+import burgunderGal5  from "../../assets/20250417_094738-4-1024x768.jpg";
+import burgunderGal6  from "../../assets/20250417_094615-1-1024x577.jpg";
+
+// Rivaner
+import rivanerHero1   from "../../assets/20250513_110024-1024x577.jpg";
+import rivanerHero2   from "../../assets/20250513_110520-1024x577.jpg";
+import rivanerGal1    from "../../assets/20250513_110122-577x1024.jpg";
+import rivanerGal2    from "../../assets/20250513_110141-577x1024.jpg";
+import rivanerGal3    from "../../assets/20250513_110156-577x1024.jpg";
+import rivanerGal4    from "../../assets/20250513_110202-577x1024.jpg";
+import rivanerGal5    from "../../assets/20250513_110257-1-577x1024.jpg";
+import rivanerGal6    from "../../assets/20250513_110602-1-1024x577.jpg";
+
+// Regent
+import regentHero1    from "../../assets/20250424_125054-1024x577.jpg";
+import regentHero2    from "../../assets/20250424_125252-1024x577.jpg";
+import regentGal1     from "../../assets/20250424_125120-1.jpg";
+import regentGal2     from "../../assets/20250424_125315.jpg";
+import regentGal3     from "../../assets/20250424_125408-577x1024.jpg";
+import regentGal4     from "../../assets/20250424_125235.jpg";
+import regentGal5     from "../../assets/20250424_125230.jpg";
+import regentGal6     from "../../assets/20250424_125037-1024x577.jpg";
+
+// Shared
+import teamImage      from "../../assets/Gruesse-vom-Team-Villa-Elbling-lang.png";
+
 const rooms = [
   {
     id: 'hochzeitssuite-gutedel',
@@ -29,18 +93,11 @@ const rooms = [
       'Die Übernachtung in der Hochzeitssuite „Gutedel" kostet 160€ pro Nacht. Enthalten sind das großzügige Frühstücksbuffet für zwei Personen sowie der Parkplatz auf dem Grundstück.',
     extraPricing: null,
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/10/Schlafbereich-Weddingsuite-1024x768.jpg',
-        alt: 'Hochzeitssuite Gutedel Schlafbereich',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/10/Wohnbereich-mit-Kamin-Hochzeitssuite-1024x683.jpg',
-        alt: 'Hochzeitssuite Wohnbereich mit Kamin',
-      },
+      { url: gutedelHero1, alt: 'Hochzeitssuite Gutedel Schlafbereich' },
+      { url: gutedelHero2, alt: 'Hochzeitssuite Wohnbereich mit Kamin' },
     ],
     galleryImages: [],
-    teamImage:
-      'https://hotel-villa-elbling.de/wp-content/uploads/2024/04/Gruesse-vom-Team-Villa-Elbling-lang.png',
+    teamImage: teamImage,
   },
   {
     id: 'doppelzimmer-bacchus',
@@ -69,31 +126,15 @@ const rooms = [
       'Die Übernachtung im Doppelzimmer „Bacchus" kostet 135€ pro Nacht. Enthalten sind das großzügige Frühstücksbuffet für zwei Personen sowie der Parkplatz auf dem Grundstück.',
     extraPricing: null,
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Bacchus-Bild-vom-Bett-768x1024.jpg',
-        alt: 'Doppelzimmer Bacchus Bett',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Bacchus-Sitzecke-768x1024.jpg',
-        alt: 'Doppelzimmer Bacchus Sitzecke',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Badezimmer-Bacchus-mit-Wanne-768x1024.jpg',
-        alt: 'Doppelzimmer Bacchus Badezimmer mit Wanne',
-      },
+      { url: bacchusHero1, alt: 'Doppelzimmer Bacchus Bett' },
+      { url: bacchusHero2, alt: 'Doppelzimmer Bacchus Sitzecke' },
+      { url: bacchusHero3, alt: 'Doppelzimmer Bacchus Badezimmer mit Wanne' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Schriftzug-Bacchus-1024x768.jpg',
-        alt: 'Schriftzug Bacchus',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Sitzecke-Doppelzimmer-Bacchus-quer-1024x768.jpg',
-        alt: 'Sitzecke Doppelzimmer Bacchus',
-      },
+      { url: bacchusGal1, alt: 'Schriftzug Bacchus' },
+      { url: bacchusGal2, alt: 'Sitzecke Doppelzimmer Bacchus' },
     ],
-    teamImage:
-      'https://hotel-villa-elbling.de/wp-content/uploads/2024/04/Gruesse-vom-Team-Villa-Elbling-lang.png',
+    teamImage: teamImage,
   },
   {
     id: 'suite-riesling',
@@ -127,36 +168,15 @@ const rooms = [
       'Aufbettung Kind (unter 6) 17€',
     ],
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_145846-1024x577.jpg',
-        alt: 'Schlafbereich Suite Riesling',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_145919-1024x577.jpg',
-        alt: 'Wohn- und Schlafbereich Suite Riesling',
-      },
+      { url: rieslingHero1, alt: 'Schlafbereich Suite Riesling' },
+      { url: rieslingHero2, alt: 'Wohn- und Schlafbereich Suite Riesling' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_134314-1024x577.jpg',
-        alt: 'Wohnbereich Suite Riesling',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_135406-1-1024x577.jpg',
-        alt: 'Zimmerdetail Goldener Globus',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_134608-577x1024.jpg',
-        alt: 'Tageslichtbad Suite Riesling',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_135337-577x1024.jpg',
-        alt: 'Wohnbereich mit Schlafsofa',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241213_145851-2-577x1024.jpg',
-        alt: 'Großes Doppelbett Suite Riesling',
-      },
+      { url: rieslingGal1, alt: 'Wohnbereich Suite Riesling' },
+      { url: rieslingGal2, alt: 'Zimmerdetail Goldener Globus' },
+      { url: rieslingGal3, alt: 'Tageslichtbad Suite Riesling' },
+      { url: rieslingGal4, alt: 'Wohnbereich mit Schlafsofa' },
+      { url: rieslingGal5, alt: 'Großes Doppelbett Suite Riesling' },
     ],
     teamImage: null,
   },
@@ -187,31 +207,15 @@ const rooms = [
       'Die Übernachtung im Doppelzimmer „Scheurebe" kostet 135€ pro Nacht. Enthalten sind das großzügige Frühstücksbuffet für zwei Personen, der Parkplatz auf dem Grundstück sowie die private Nutzung der Infrarotsauna.',
     extraPricing: null,
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241129_104444-1024x577.jpg',
-        alt: 'Badezimmer Doppelzimmer Scheurebe',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241129_104618-1024x577.jpg',
-        alt: 'Schlafbereich Doppelzimmer Scheurebe',
-      },
+      { url: scheurebeHero1, alt: 'Badezimmer Doppelzimmer Scheurebe' },
+      { url: scheurebeHero2, alt: 'Schlafbereich Doppelzimmer Scheurebe' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241129_104513-577x1024.jpg',
-        alt: 'Selbstgebauter Waschtisch Scheurebe',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241129_104545-1024x577.jpg',
-        alt: 'Infrarotsauna Wellnessurlaub Radebeul',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2024/12/20241129_104633-577x1024.jpg',
-        alt: 'Schrank Zimmer Scheurebe',
-      },
+      { url: scheurebeGal1, alt: 'Selbstgebauter Waschtisch Scheurebe' },
+      { url: scheurebeGal2, alt: 'Infrarotsauna Wellnessurlaub Radebeul' },
+      { url: scheurebeGal3, alt: 'Schrank Zimmer Scheurebe' },
     ],
-    teamImage:
-      'https://hotel-villa-elbling.de/wp-content/uploads/2024/04/Gruesse-vom-Team-Villa-Elbling-lang.png',
+    teamImage: teamImage,
   },
   {
     id: 'familiensuite-burgunder',
@@ -250,40 +254,16 @@ const rooms = [
       'Kinder unter 6 Jahren 17€',
     ],
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094304-1024x577.jpg',
-        alt: 'Familiensuite Burgunder',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094404-1024x577.jpg',
-        alt: 'Familiensuite Burgunder Wohnbereich',
-      },
+      { url: burgunderHero1, alt: 'Familiensuite Burgunder' },
+      { url: burgunderHero2, alt: 'Familiensuite Burgunder Wohnbereich' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094347-4-577x1024.jpg',
-        alt: 'Familiensuite Detail',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094537-2-577x1024.jpg',
-        alt: 'Kinderschlafzimmer Burgunder',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094326-577x1024.jpg',
-        alt: 'Familiensuite Burgunder',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094457-5-1024x577.jpg',
-        alt: 'Familiensuite Burgunder Übersicht',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094738-4-1024x768.jpg',
-        alt: 'Familiensuite Burgunder Bad',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250417_094615-1-1024x577.jpg',
-        alt: 'Familiensuite Burgunder Schlafzimmer',
-      },
+      { url: burgunderGal1, alt: 'Familiensuite Detail' },
+      { url: burgunderGal2, alt: 'Kinderschlafzimmer Burgunder' },
+      { url: burgunderGal3, alt: 'Familiensuite Burgunder' },
+      { url: burgunderGal4, alt: 'Familiensuite Burgunder Übersicht' },
+      { url: burgunderGal5, alt: 'Familiensuite Burgunder Bad' },
+      { url: burgunderGal6, alt: 'Familiensuite Burgunder Schlafzimmer' },
     ],
     teamImage: null,
   },
@@ -312,40 +292,16 @@ const rooms = [
       'Die Übernachtung in unserem Einzelzimmer Rivaner kostet 89€ pro Nacht. Enthalten ist unser leckeres hausgemachtes Frühstück für eine Person.',
     extraPricing: null,
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110024-1024x577.jpg',
-        alt: 'Einzelzimmer Rivaner',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110520-1024x577.jpg',
-        alt: 'Einzelzimmer Rivaner Übersicht',
-      },
+      { url: rivanerHero1, alt: 'Einzelzimmer Rivaner' },
+      { url: rivanerHero2, alt: 'Einzelzimmer Rivaner Übersicht' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110122-577x1024.jpg',
-        alt: 'Einzelzimmer Rivaner Detail',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110141-577x1024.jpg',
-        alt: 'Einzelzimmer Rivaner Detail 2',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110156-577x1024.jpg',
-        alt: 'Einzelzimmer Rivaner Detail 3',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110202-577x1024.jpg',
-        alt: 'Einzelzimmer Rivaner Detail 4',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110257-1-577x1024.jpg',
-        alt: 'Einzelzimmer Rivaner Detail 5',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250513_110602-1-1024x577.jpg',
-        alt: 'Einzelzimmer Rivaner Übersicht 2',
-      },
+      { url: rivanerGal1, alt: 'Einzelzimmer Rivaner Detail' },
+      { url: rivanerGal2, alt: 'Einzelzimmer Rivaner Detail 2' },
+      { url: rivanerGal3, alt: 'Einzelzimmer Rivaner Detail 3' },
+      { url: rivanerGal4, alt: 'Einzelzimmer Rivaner Detail 4' },
+      { url: rivanerGal5, alt: 'Einzelzimmer Rivaner Detail 5' },
+      { url: rivanerGal6, alt: 'Einzelzimmer Rivaner Übersicht 2' },
     ],
     teamImage: null,
   },
@@ -383,40 +339,16 @@ const rooms = [
       'Aufbettung Kind (unter 6) 17€',
     ],
     heroImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125054-1024x577.jpg',
-        alt: 'Suite Regent Wohnbereich',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125252-1024x577.jpg',
-        alt: 'Suite Regent Schlafzimmer',
-      },
+      { url: regentHero1, alt: 'Suite Regent Wohnbereich' },
+      { url: regentHero2, alt: 'Suite Regent Schlafzimmer' },
     ],
     galleryImages: [
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125120-1.jpg',
-        alt: 'Suite Regent Detail',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125315.jpg',
-        alt: 'Suite Regent Detail 2',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125408-577x1024.jpg',
-        alt: 'Suite Regent Detail 3',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125235.jpg',
-        alt: 'Suite Regent Detail 4',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125230.jpg',
-        alt: 'Suite Regent Detail 5',
-      },
-      {
-        url: 'https://hotel-villa-elbling.de/wp-content/uploads/2025/05/20250424_125037-1024x577.jpg',
-        alt: 'Suite Regent Übersicht',
-      },
+      { url: regentGal1, alt: 'Suite Regent Detail' },
+      { url: regentGal2, alt: 'Suite Regent Detail 2' },
+      { url: regentGal3, alt: 'Suite Regent Detail 3' },
+      { url: regentGal4, alt: 'Suite Regent Detail 4' },
+      { url: regentGal5, alt: 'Suite Regent Detail 5' },
+      { url: regentGal6, alt: 'Suite Regent Übersicht' },
     ],
     teamImage: null,
   },

@@ -1,67 +1,78 @@
 // ─────────────────────────────────────────────
+//  Image imports (from local assets folder)
+// ─────────────────────────────────────────────
+import gutedelImg   from "../../assets/Schlafbereich-Weddingsuite-1024x768.jpg";
+import bacchusImg   from "../../assets/Hotel-Villa-Elbling-Radebeul-Doppelzimmer-Bacchus-Blick-ins-Zimmer-1024x768.jpg";
+import rieslingImg  from "../../assets/Suite-Riesling-Radebeul-1024x685.jpg";
+import scheurebeImg from "../../assets/Badezimmer-fuer-ihren-Wellnessurlaub-1024x810.jpg";
+import burgunderImg from "../../assets/Burgunder-Familiensuite.png";
+import rivanerImg   from "../../assets/Bett-im-Einzelzimmer-Rivaner-1024x877.jpg";
+import regentImg    from "../../assets/Schlafzimmer-Suite-Regent-1024x760.png";
+
+// ─────────────────────────────────────────────
 //  ROOMS DATA
 // ─────────────────────────────────────────────
 export const ROOMS = [
   {
     id: "gutedel",
-    name: 'Hochzeitssuite \u201EGutedel\u201C',
+    name: 'Hochzeitssuite „Gutedel“',
     basePrice: 160,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2024/10/Schlafbereich-Weddingsuite-1024x768.jpg",
-    description: "42 m\u00B2 Weddingsuite mit getrenntem Wohn- & Schlafbereich, Kamin und Tageslichtbad mit Wanne & Dusche.",
+    image: gutedelImg,
+    description: "42 m² Weddingsuite mit getrenntem Wohn- & Schlafbereich, Kamin und Tageslichtbad mit Wanne & Dusche.",
     highlights: ["Kamin inkl. Feuerholz", "Tageslichtbad mit Wanne & Dusche", "Getrennter Wohn- & Schlafbereich"],
     guests: 2,
   },
   {
     id: "bacchus",
-    name: 'Doppelzimmer \u201EBacchus\u201C',
+    name: 'Doppelzimmer „Bacchus“',
     basePrice: 135,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2024/09/Hotel-Villa-Elbling-Radebeul-Doppelzimmer-Bacchus-Blick-ins-Zimmer-1024x768.jpg",
-    description: "26 m\u00B2 Doppelzimmer im englischen Design mit hochwertiger Ausstattung und Tageslichtbad.",
+    image: bacchusImg,
+    description: "26 m² Doppelzimmer im englischen Design mit hochwertiger Ausstattung und Tageslichtbad.",
     highlights: ["Tageslichtbad mit Wanne & Dusche", "Englisches Design", "Hochwertige Ausstattung"],
     guests: 2,
   },
   {
     id: "riesling",
-    name: 'Suite \u201ERiesling\u201C',
+    name: 'Suite „Riesling“',
     basePrice: 160,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2024/12/Suite-Riesling-Radebeul-1024x685.jpg",
-    description: "Gro\u00DFz\u00FCgige Suite mit getrenntem Wohn- und Schlafbereich und Schlafsofa f\u00FCr bis zu 3 Personen.",
+    image: rieslingImg,
+    description: "Großzügige Suite mit getrenntem Wohn- und Schlafbereich und Schlafsofa für bis zu 3 Personen.",
     highlights: ["Getrennter Wohn- & Schlafbereich", "Schlafsofa", "Bis zu 3 Personen"],
     guests: 3,
   },
   {
     id: "scheurebe",
-    name: 'Doppelzimmer \u201EScheurebe\u201C',
+    name: 'Doppelzimmer „Scheurebe“',
     basePrice: 135,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2024/12/Badezimmer-fuer-ihren-Wellnessurlaub-1024x810.jpg",
+    image: scheurebeImg,
     description: "Doppelzimmer mit Gartenblick, privater Infrarotsauna und Blick auf die Weinberge.",
     highlights: ["Private Infrarotsauna", "Blick auf Weinberge", "Gartenausrichtung"],
     guests: 2,
   },
   {
     id: "burgunder",
-    name: 'Familiensuite \u201EBurgunder\u201C',
+    name: 'Familiensuite „Burgunder“',
     basePrice: 160,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2025/05/Burgunder-Familiensuite.png",
-    description: "Ger\u00E4umige Familiensuite mit separatem Kinderschlafzimmer und Blick auf Schloss Wackerbarth.",
-    highlights: ["Separates Kinderschlafzimmer", "Blick auf Schloss Wackerbarth", "Ideal f\u00FCr Familien"],
+    image: burgunderImg,
+    description: "Geräumige Familiensuite mit separatem Kinderschlafzimmer und Blick auf Schloss Wackerbarth.",
+    highlights: ["Separates Kinderschlafzimmer", "Blick auf Schloss Wackerbarth", "Ideal für Familien"],
     guests: 4,
   },
   {
     id: "rivaner",
-    name: 'Einzelzimmer \u201ERivaner\u201C',
+    name: 'Einzelzimmer „Rivaner“',
     basePrice: 89,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2025/05/Bett-im-Einzelzimmer-Rivaner-1024x877.jpg",
-    description: "Gem\u00FCtliches Einzelzimmer im 2. OG mit Schreibtisch. Ideal f\u00FCr Allein- und Gesch\u00E4ftsreisende.",
-    highlights: ["Schreibtisch", "2. Obergeschoss", "Ideal f\u00FCr Alleinreisende"],
+    image: rivanerImg,
+    description: "Gemütliches Einzelzimmer im 2. OG mit Schreibtisch. Ideal für Allein- und Geschäftsreisende.",
+    highlights: ["Schreibtisch", "2. Obergeschoss", "Ideal für Alleinreisende"],
     guests: 1,
   },
   {
     id: "regent",
-    name: 'Suite \u201ERegent\u201C',
+    name: 'Suite „Regent“',
     basePrice: 160,
-    image: "https://hotel-villa-elbling.de/wp-content/uploads/2025/05/Schlafzimmer-Suite-Regent-1024x760.png",
-    description: "Gem\u00FCtliche Suite in kr\u00E4ftigen Lehmfarben mit herrlichem Blick auf die Radebeuler Weinberge.",
+    image: regentImg,
+    description: "Gemütliche Suite in kräftigen Lehmfarben mit herrlichem Blick auf die Radebeuler Weinberge.",
     highlights: ["Blick auf Weinberge", "Getrennter Wohn- & Schlafbereich", "Lehmfarben Design"],
     guests: 2,
   },
