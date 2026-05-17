@@ -48,61 +48,6 @@ export default function AdminLogin() {
   return (
     <div className="al-root">
 
-     
-      {/* ── NAVIGATION ─────────────────────────────────────────────────────── */}
-      <nav className="al-nav">
-        <a href="/" className="al-nav__logo-link" aria-label="Back to Villa Elbling">
-          <div className="al-nav__logo">
-            <span className="al-nav__logo-name">Villa Elbling</span>
-            <span className="al-nav__logo-sub">Hotel · Bed &amp; Breakfast</span>
-          </div>
-        </a>
-
-        <button
-          className="al-nav__hamburger"
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-label="Toggle menu"
-          aria-expanded={menuOpen}
-        >
-          ☰
-        </button>
-
-        <ul className={`al-nav__links ${menuOpen ? "al-nav__links--open" : ""}`}>
-          {NAV_ITEMS.map((item) => (
-            <li key={item.label} className={item.dropdown ? "al-nav__has-sub" : ""}>
-              <a
-                className={`al-nav__link${item.active ? " al-nav__link--active" : ""}`}
-                href={item.href}
-              >
-                {item.label}
-                {item.dropdown && " ▾"}
-              </a>
-            </li>
-          ))}
-          <li>
-            <button
-              className="al-nav__link al-nav__link--btn"
-              aria-label="Search"
-              onClick={() => {}}
-            >
-              🔍
-            </button>
-          </li>
-        </ul>
-
-        {/* CTA hidden on admin page — uncomment if you want it */}
-        {/* <a className="al-nav__cta" href="/book">Jetzt anfragen!</a> */}
-      </nav>
-
-      {/* ── BREADCRUMB ─────────────────────────────────────────────────────── */}
-      <div className="al-breadcrumb">
-        <span className="al-breadcrumb__label">Admin Login</span>
-        <span className="al-breadcrumb__path">
-          <a href="/">Start</a>
-          <span className="al-breadcrumb__sep"> / </span>
-          <span>Admin Login</span>
-        </span>
-      </div>
 
       {/* ── HERO SECTION with LOGIN CARD ───────────────────────────────────── */}
       <div className="al-hero" style={{ backgroundImage: `url(${BG_IMAGE})` }}>

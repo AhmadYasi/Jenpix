@@ -6,6 +6,7 @@ import Zimmer from "./pages/rooms/ZimmerPage";
 import RoomDetail from "./pages/rooms/RoomDetailPage";
 import Layout from "./components/Layout";
 import Radebeul from "./pages/radebeul/RadebulPage"
+// import Admin from "./pages/adminpage/adminLogin/adminLogin"
 
 function App() {
   return (
@@ -22,7 +23,9 @@ function App() {
             element={<RoomDetail />}
           />
         </Routes>
+        {/* <Admin/> */}
       </Layout>
+      
     </BrowserRouter>
   );
 }
