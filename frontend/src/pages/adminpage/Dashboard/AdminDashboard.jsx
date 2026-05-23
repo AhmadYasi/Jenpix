@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminSidebar from "../AdminSidebar";
-import "./AdminDashboard";
+import "./AdminDashboard.css";
 
 // ── Demo data ────────────────────────────────────────────────────────────────
 const ROOMS = ["Gutedel", "Bacchus", "Riesling", "Scheurebe", "Burgunder", "Rivaner", "Regent"];
