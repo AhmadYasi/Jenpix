@@ -1,86 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AdminSidebar from "../AdminSidebar";
+import { useAuth } from "../../../auth/AuthContext";
+import { adminApi, publicApi } from "../../../api/api";
 import "./BookingsPage.css";
 
-// ── Room pricing data ─────────────────────────────────────────────────────────
-const ROOM_PRICES = {
-  "Gutedel Suite":              { price: 135, breakfast: 18 },
-  "Bacchus Doppelzimmer":       { price: 120, breakfast: 18 },
-  "Riesling Suite":             { price: 160, breakfast: 18 },
-  "Scheurebe Doppelzimmer":     { price: 135, breakfast: 18 },
-  "Burgunder Familien Suite":   { price: 160, breakfast: 18 },
-  "Rivaner Einzelzimmer":       { price: 110, breakfast: 15 },
-  "Regent Suite":               { price: 170, breakfast: 18 },
-};
-
-const EXTRA_BED_PRICE = 30;
-
-// ── Demo Data ─────────────────────────────────────────────────────────────────
-const INITIAL_BOOKINGS = [
-  {
-    id: "#VE250516-001", created: "16 May 2026, 09:21",
-    name: "Clara Hoffmann", email: "clara.hoffmann@email.com", phone: "+49 171 2345671",
-    room: "Riesling Suite", roomSub: "",
-    dates: "16 May 2026 – 18 May 2026", nights: 2,
-    guests: "2 Adults", source: "Booking.com", sourceType: "booking",
-    total: "€320.00", perNight: "€160.00 / night", status: "confirmed",
-  },
-  {
-    id: "#VE250517-002", created: "17 May 2026, 11:43",
-    name: "Felix Brandt", email: "felix.brandt@email.com", phone: "+49 172 3456782",
-    room: "Gutedel Suite", roomSub: "",
-    dates: "17 May 2026 – 20 May 2026", nights: 3,
-    guests: "2 Adults", source: "Booking.com", sourceType: "booking",
-    total: "€405.00", perNight: "€135.00 / night", status: "confirmed",
-  },
-  {
-    id: "#VE250518-003", created: "18 May 2026, 14:15",
-    name: "Mia Steinberg", email: "mia.steinberg@email.com", phone: "+49 173 4567893",
-    room: "Bacchus Doppelzimmer", roomSub: "",
-    dates: "18 May 2026 – 21 May 2026", nights: 3,
-    guests: "2 Adults", source: "Website", sourceType: "website",
-    total: "€360.00", perNight: "€120.00 / night", status: "pending",
-  },
-  {
-    id: "#VE250519-004", created: "19 May 2026, 16:02",
-    name: "Jonas Richter", email: "jonas.richter@email.com", phone: "+49 174 5678904",
-    room: "Burgunder Familien Suite", roomSub: "",
-    dates: "19 May 2026 – 22 May 2026", nights: 3,
-    guests: "3 Adults, 1 Child", source: "Phone", sourceType: "phone",
-    total: "€480.00", perNight: "€160.00 / night", status: "confirmed",
-  },
-  {
-    id: "#VE250520-005", created: "20 May 2026, 10:31",
-    name: "Lea Hartmann", email: "lea.hartmann@email.com", phone: "+49 175 6789015",
-    room: "Rivaner Einzelzimmer", roomSub: "",
-    dates: "20 May 2026 – 21 May 2026", nights: 1,
-    guests: "1 Adult", source: "Email", sourceType: "email",
-    total: "€110.00", perNight: "€110.00 / night", status: "confirmed",
-  },
-  {
-    id: "#VE250523-006", created: "23 May 2026, 13:05",
-    name: "Tobias Vogel", email: "tobias.vogel@email.com", phone: "+49 176 7890126",
-    room: "Scheurebe Doppelzimmer", roomSub: "",
-    dates: "23 May 2026 – 25 May 2026", nights: 2,
-    guests: "2 Adults", source: "Booking.com", sourceType: "booking",
-    total: "€270.00", perNight: "€135.00 / night", status: "cancelled",
-  },
-  {
-    id: "#VE250524-007", created: "24 May 2026, 09:11",
-    name: "Nina Bauer", email: "nina.bauer@email.com", phone: "+49 177 8901237",
-    room: "Regent Suite", roomSub: "",
-    dates: "24 May 2026 – 27 May 2026", nights: 3,
-    guests: "2 Adults, 2 Children", source: "Website", sourceType: "website",
-    total: "€510.00", perNight: "€170.00 / night", status: "pending",
-  },
+// Extra-bed tiers (per night, breakfast included). Mirror of backend pricing.
+// Source of truth: Gundel Woite, June 2026. 0–5 free / 6–15 €30 / 16+ €45.
+const EXTRA_BED_TIERS = [
+  { value: "none", label: "No extra bed", price: 0 },
+  { value: "child_0_5", label: "Child 0–5 (free)", price: 0 },
+  { value: "child_6_15", label: "Child 6–15 (€30/night)", price: 30 },
+  { value: "adult_16", label: "Adult 16+ (€45/night)", price: 45 },
 ];
+const EXTRA_BED_PRICE_BY_TIER = Object.fromEntries(EXTRA_BED_TIERS.map(t => [t.value, t.price]));
 
-const ROOM_LIST   = ["Gutedel Suite","Bacchus Doppelzimmer","Riesling Suite","Scheurebe Doppelzimmer","Burgunder Familien Suite","Rivaner Einzelzimmer","Regent Suite"];
-const ROOMS_FILTER = ["All Rooms", ...ROOM_LIST];
-const STATUSES    = ["All Status", "confirmed", "pending", "cancelled"];
-const SOURCES     = ["All Sources", "Booking.com", "Website", "Phone", "Email"];
-const GUEST_OPTS  = ["1 Adult","2 Adults","3 Adults","4 Adults","2 Adults, 1 Child","2 Adults, 2 Children","3 Adults, 1 Child"];
-const EXTRA_BEDS  = ["No extra bed", "1 extra bed"];
+const STATUSES = ["All Status", "confirmed", "pending", "cancelled"];
+const SOURCES = ["All Sources", "Booking.com", "Website", "Phone", "Email"];
+const GUEST_OPTS = ["1 Adult", "2 Adults", "3 Adults", "4 Adults", "2 Adults, 1 Child", "2 Adults, 2 Children", "3 Adults, 1 Child"];
 const SOURCE_OPTS = ["Booking.com", "Website", "Phone", "Email"];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -90,26 +26,68 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
+function formatCreated(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
 function nightsBetween(from, to) {
   if (!from || !to) return 0;
   const diff = new Date(to) - new Date(from);
   return Math.max(0, Math.round(diff / 86400000));
 }
 
-function sourceTypeOf(src) {
-  if (src === "Booking.com") return "booking";
-  if (src === "Phone") return "phone";
-  if (src === "Email") return "email";
+function guestLabel(adults, children) {
+  const parts = [];
+  if (adults > 0) parts.push(`${adults} Adult${adults !== 1 ? "s" : ""}`);
+  if (children > 0) parts.push(`${children} Child${children !== 1 ? "ren" : ""}`);
+  return parts.join(", ") || "—";
+}
+
+function parseGuests(str) {
+  const adults = parseInt((str.match(/(\d+)\s+Adult/) || [])[1] || "0", 10);
+  const children = parseInt((str.match(/(\d+)\s+Child/) || [])[1] || "0", 10);
+  return { adults, children };
+}
+
+function mapSourceLabel(src) {
+  const s = (src || "").toLowerCase();
+  if (s.includes("booking")) return "Booking.com";
+  if (s.includes("phone")) return "Phone";
+  if (s.includes("email")) return "Email";
+  return "Website";
+}
+
+function mapSourceType(src) {
+  const s = (src || "").toLowerCase();
+  if (s.includes("booking")) return "booking";
+  if (s.includes("phone")) return "phone";
+  if (s.includes("email")) return "email";
   return "website";
 }
 
-function genId(list) {
-  const num = list.length + 1;
-  const today = new Date();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  const yy = String(today.getFullYear()).slice(2);
-  return `#VE${yy}${mm}${dd}-${String(num).padStart(3, "0")}`;
+// Convert an API booking into the shape the table expects
+function mapApiBooking(b) {
+  return {
+    id: b.bookingReference,
+    uuid: b.id,
+    created: formatCreated(b.createdAt),
+    name: b.guestName,
+    email: b.guestEmail,
+    phone: b.guestPhone,
+    room: b.roomName,
+    roomSub: "",
+    dates: `${formatDate(b.checkIn)} – ${formatDate(b.checkOut)}`,
+    checkInISO: b.checkIn,        // raw YYYY-MM-DD, used for arrival-date filtering
+    nights: b.nights,
+    guests: guestLabel(b.adults, b.children),
+    source: mapSourceLabel(b.source),
+    sourceType: mapSourceType(b.source),
+    total: `€${Number(b.totalPrice).toFixed(2)}`,
+    perNight: `€${Number(b.pricePerNight).toFixed(2)} / night (room only)`,
+    status: b.status,
+  };
 }
 
 // ── Source Icon ───────────────────────────────────────────────────────────────
@@ -118,24 +96,24 @@ function SourceIcon({ type }) {
   if (type === "phone") return (
     <span className="bp-source-icon bp-source-icon--phone">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.81a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
       </svg>
     </span>
   );
   if (type === "email") return (
     <span className="bp-source-icon bp-source-icon--email">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-        <polyline points="22,6 12,13 2,6"/>
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
       </svg>
     </span>
   );
   return (
     <span className="bp-source-icon bp-source-icon--website">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="2" y1="12" x2="22" y2="12"/>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
       </svg>
     </span>
   );
@@ -145,61 +123,141 @@ function StatusBadge({ status }) {
   return <span className={`bp-badge bp-badge--${status}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>;
 }
 
+// Local YYYY-MM-DD (date inputs already provide this, but keep a safe formatter)
+function toKey(dateStr) {
+  return dateStr || "";
+}
+
 // ── New Booking Modal ─────────────────────────────────────────────────────────
 const EMPTY_FORM = {
   name: "", email: "", phone: "",
   room: "", checkin: "", checkout: "",
-  guests: "", extraBed: "No extra bed", notes: "",
+  guests: "", extraBedTier: "none", notes: "",
   source: "", status: "confirmed",
 };
 
-function NewBookingModal({ onClose, onSave }) {
+function NewBookingModal({ rooms, onClose, onSave }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
-  const nights    = nightsBetween(form.checkin, form.checkout);
-  const roomData  = ROOM_PRICES[form.room] || null;
-  const roomPrice = roomData ? roomData.price * nights : null;
-  const breakfast = 0; // optional — not auto-added
-  const extraBed  = form.extraBed === "1 extra bed" ? EXTRA_BED_PRICE * nights : 0;
-  const total     = roomPrice !== null ? roomPrice + breakfast + extraBed : null;
+  // Availability-driven room list
+  const [availableRoomIds, setAvailableRoomIds] = useState(null); // null = not yet loaded
+  const [availLoading, setAvailLoading] = useState(false);
+  const [availError, setAvailError] = useState(null);
 
-  // Close on backdrop click
+  // dates + guests must all be present before we can check availability
+  const datesAndGuestsReady =
+    !!form.checkin &&
+    !!form.checkout &&
+    form.checkout > form.checkin &&
+    !!form.guests;
+
+  const nights = nightsBetween(form.checkin, form.checkout);
+  const roomData = rooms.find(r => r.id === form.room) || null;
+  const roomPrice = roomData ? roomData.priceWithoutBreakfast * nights : null;
+  const roomAllowsExtraBed = !!(roomData && roomData.extraBedAllowed);
+  const extraBedPerNight = EXTRA_BED_PRICE_BY_TIER[form.extraBedTier] || 0;
+  const extraBed = extraBedPerNight * nights;
+  const total = roomPrice !== null ? roomPrice + extraBed : null;
+
   const handleBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
+  // Fetch availability whenever dates + guests are all set.
+  // Filters the room dropdown to only rooms free for the chosen dates/party size.
+  useEffect(() => {
+    if (!datesAndGuestsReady) {
+      setAvailableRoomIds(null);
+      setAvailError(null);
+      return;
+    }
+
+    const { adults, children } = parseGuests(form.guests);
+    const guestCount = adults + children;
+
+    let cancelled = false;
+    setAvailLoading(true);
+    setAvailError(null);
+
+    publicApi.getAvailability(toKey(form.checkin), toKey(form.checkout), guestCount)
+      .then(list => {
+        if (cancelled) return;
+        const ids = new Set(list.map(r => r.id));
+        setAvailableRoomIds(ids);
+        // If the currently selected room is no longer available, clear it.
+        setForm(f => (f.room && !ids.has(f.room) ? { ...f, room: "" } : f));
+      })
+      .catch(err => {
+        if (cancelled) return;
+        setAvailableRoomIds(new Set());          // nothing selectable on error
+        setForm(f => (f.room ? { ...f, room: "" } : f));
+        setAvailError(err.message || "Could not load availability for these dates.");
+      })
+      .finally(() => { if (!cancelled) setAvailLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [datesAndGuestsReady, form.checkin, form.checkout, form.guests]);
+
   const set = (field) => (e) => {
     setForm(f => ({ ...f, [field]: e.target.value }));
     setErrors(er => ({ ...er, [field]: "" }));
   };
 
+  // If the chosen room doesn't allow an extra bed, force tier back to "none".
+  useEffect(() => {
+    if (!roomAllowsExtraBed && form.extraBedTier !== "none") {
+      setForm(f => ({ ...f, extraBedTier: "none" }));
+    }
+  }, [roomAllowsExtraBed, form.extraBedTier]);
+
   const validate = () => {
     const e = {};
-    if (!form.name.trim())     e.name     = "Required";
-    if (!form.email.trim())    e.email    = "Required";
-    if (!form.phone.trim())    e.phone    = "Required";
-    if (!form.room)            e.room     = "Required";
-    if (!form.checkin)         e.checkin  = "Required";
-    if (!form.checkout)        e.checkout = "Required";
-    if (!form.guests)          e.guests   = "Required";
-    if (!form.source)          e.source   = "Required";
+    if (!form.name.trim()) e.name = "Required";
+    if (!form.email.trim()) e.email = "Required";
+    if (!form.phone.trim()) e.phone = "Required";
+    if (!form.room) e.room = "Required";
+    if (!form.checkin) e.checkin = "Required";
+    if (!form.checkout) e.checkout = "Required";
+    if (!form.guests) e.guests = "Required";
+    if (!form.source) e.source = "Required";
     if (form.checkin && form.checkout && form.checkout <= form.checkin)
       e.checkout = "Must be after check-in";
     return e;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const e = validate();
     if (Object.keys(e).length > 0) { setErrors(e); return; }
-    onSave(form, nights, total);
-    onClose();
+    setSaving(true);
+    setSaveError(null);
+    const result = await onSave(form);
+    setSaving(false);
+    if (result === true) onClose();
+    else setSaveError(result || "Could not save booking. Please try again.");
   };
+
+  // The list of rooms shown in the dropdown, filtered by availability when ready.
+  const selectableRooms = availableRoomIds
+    ? rooms.filter(r => availableRoomIds.has(r.id))
+    : [];
+
+  // Helper text / placeholder for the room dropdown depending on state.
+  let roomPlaceholder = "Select dates and guests first";
+  if (datesAndGuestsReady) {
+    if (availLoading) roomPlaceholder = "Checking availability…";
+    else if (availError) roomPlaceholder = "Could not check availability";
+    else if (availableRoomIds && selectableRooms.length === 0) roomPlaceholder = "No rooms available";
+    else roomPlaceholder = "Select a room";
+  }
+
+  const roomDisabled = !datesAndGuestsReady || availLoading || selectableRooms.length === 0;
 
   return (
     <div className="nbm-backdrop" onClick={handleBackdrop}>
@@ -221,8 +279,8 @@ function NewBookingModal({ onClose, onSave }) {
           <div className="nbm-section">
             <div className="nbm-section-title">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
               Guest Information
             </div>
@@ -249,22 +307,16 @@ function NewBookingModal({ onClose, onSave }) {
           <div className="nbm-section">
             <div className="nbm-section-title">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               Booking Details
             </div>
             <div className="nbm-row nbm-row--3">
-              <div className="nbm-field">
-                <label className="nbm-label">Room <span className="nbm-req">*</span></label>
-                <select className={`nbm-select ${errors.room ? "nbm-input--error" : ""}`} value={form.room} onChange={set("room")}>
-                  <option value="">Select a room</option>
-                  {ROOM_LIST.map(r => <option key={r}>{r}</option>)}
-                </select>
-                {errors.room && <p className="nbm-error">{errors.room}</p>}
-              </div>
+              {/* Check-in first, then check-out, then guests, then room becomes selectable.
+                  Room is placed after so the "dates + guests first" flow reads naturally. */}
               <div className="nbm-field">
                 <label className="nbm-label">Check-In Date <span className="nbm-req">*</span></label>
                 <input className={`nbm-input ${errors.checkin ? "nbm-input--error" : ""}`} type="date" value={form.checkin} onChange={set("checkin")} />
@@ -275,8 +327,6 @@ function NewBookingModal({ onClose, onSave }) {
                 <input className={`nbm-input ${errors.checkout ? "nbm-input--error" : ""}`} type="date" value={form.checkout} onChange={set("checkout")} min={form.checkin} />
                 {errors.checkout && <p className="nbm-error">{errors.checkout}</p>}
               </div>
-            </div>
-            <div className="nbm-row nbm-row--3">
               <div className="nbm-field">
                 <label className="nbm-label">Guests <span className="nbm-req">*</span></label>
                 <select className={`nbm-select ${errors.guests ? "nbm-input--error" : ""}`} value={form.guests} onChange={set("guests")}>
@@ -285,11 +335,41 @@ function NewBookingModal({ onClose, onSave }) {
                 </select>
                 {errors.guests && <p className="nbm-error">{errors.guests}</p>}
               </div>
+            </div>
+            <div className="nbm-row nbm-row--3">
+              <div className="nbm-field">
+                <label className="nbm-label">Room <span className="nbm-req">*</span></label>
+                <select
+                  className={`nbm-select ${errors.room ? "nbm-input--error" : ""}`}
+                  value={form.room}
+                  onChange={set("room")}
+                  disabled={roomDisabled}
+                >
+                  <option value="">{roomPlaceholder}</option>
+                  {selectableRooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+                {availError
+                  ? <p className="nbm-error">{availError}</p>
+                  : errors.room && <p className="nbm-error">{errors.room}</p>}
+                {datesAndGuestsReady && !availLoading && !availError && (
+                  <p className="nbm-hint">Only rooms available for these dates and guests are shown.</p>
+                )}
+              </div>
               <div className="nbm-field">
                 <label className="nbm-label">Extra Bed</label>
-                <select className="nbm-select" value={form.extraBed} onChange={set("extraBed")}>
-                  {EXTRA_BEDS.map(b => <option key={b}>{b}</option>)}
+                <select
+                  className="nbm-select"
+                  value={form.extraBedTier}
+                  onChange={set("extraBedTier")}
+                  disabled={!roomAllowsExtraBed}
+                >
+                  {EXTRA_BED_TIERS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
+                {!roomAllowsExtraBed && (
+                  <p className="nbm-hint">
+                    {roomData ? "This room does not allow an extra bed." : "Select a room first."}
+                  </p>
+                )}
               </div>
               <div className="nbm-field">
                 <label className="nbm-label">Notes (Optional)</label>
@@ -302,10 +382,10 @@ function NewBookingModal({ onClose, onSave }) {
           <div className="nbm-section">
             <div className="nbm-section-title">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               Booking Source &amp; Status
             </div>
@@ -316,7 +396,6 @@ function NewBookingModal({ onClose, onSave }) {
                   <option value="">Select source</option>
                   {SOURCE_OPTS.map(s => <option key={s}>{s}</option>)}
                 </select>
-                <p className="nbm-hint">Where did this booking come from?</p>
                 {errors.source && <p className="nbm-error">{errors.source}</p>}
               </div>
               <div className="nbm-field">
@@ -326,7 +405,6 @@ function NewBookingModal({ onClose, onSave }) {
                   <option value="pending">Pending</option>
                   <option value="cancelled">Cancelled</option>
                 </select>
-                <p className="nbm-hint">Current booking status</p>
               </div>
             </div>
           </div>
@@ -335,11 +413,11 @@ function NewBookingModal({ onClose, onSave }) {
           <div className="nbm-price-summary">
             <div className="nbm-price-header">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
               Price Summary
-              <span className="nbm-auto-tag">Automatic</span>
+              <span className="nbm-auto-tag">Estimate</span>
             </div>
             <div className="nbm-price-grid">
               <div className="nbm-price-item">
@@ -348,7 +426,7 @@ function NewBookingModal({ onClose, onSave }) {
                   {roomPrice !== null ? `€ ${roomPrice.toFixed(2)}` : "€ —"}
                 </p>
                 {nights > 0 && roomData && (
-                  <p className="nbm-price-sub">{nights} night{nights !== 1 ? "s" : ""} × €{roomData.price}</p>
+                  <p className="nbm-price-sub">{nights} night{nights !== 1 ? "s" : ""} × €{roomData.priceWithoutBreakfast}</p>
                 )}
               </div>
               <div className="nbm-price-item">
@@ -361,7 +439,7 @@ function NewBookingModal({ onClose, onSave }) {
                 <p className="nbm-price-val">
                   {extraBed > 0 ? `€ ${extraBed.toFixed(2)}` : "€ —"}
                 </p>
-                {extraBed > 0 && <p className="nbm-price-sub">{nights} × €{EXTRA_BED_PRICE}</p>}
+                {extraBed > 0 && <p className="nbm-price-sub">{nights} × €{extraBedPerNight} incl. breakfast</p>}
               </div>
               <div className="nbm-price-item nbm-price-item--total">
                 <p className="nbm-price-label">Total Price</p>
@@ -370,14 +448,20 @@ function NewBookingModal({ onClose, onSave }) {
                 </p>
               </div>
             </div>
+            <p className="nbm-hint" style={{ marginTop: "8px" }}>
+              Final price is calculated by the server on save.
+            </p>
           </div>
 
         </div>{/* end nbm-body */}
 
         {/* Footer */}
         <div className="nbm-footer">
-          <button className="nbm-btn nbm-btn--cancel" onClick={onClose}>Cancel</button>
-          <button className="nbm-btn nbm-btn--save" onClick={handleSave}>Save Booking</button>
+          {saveError && <p className="nbm-error" style={{ marginRight: "auto" }}>{saveError}</p>}
+          <button className="nbm-btn nbm-btn--cancel" onClick={onClose} disabled={saving}>Cancel</button>
+          <button className="nbm-btn nbm-btn--save" onClick={handleSave} disabled={saving}>
+            {saving ? "Saving…" : "Save Booking"}
+          </button>
         </div>
 
       </div>
@@ -387,7 +471,13 @@ function NewBookingModal({ onClose, onSave }) {
 
 // ── Bookings Page ─────────────────────────────────────────────────────────────
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  const { token } = useAuth();
+
+  const [bookings, setBookings] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -399,24 +489,53 @@ export default function BookingsPage() {
   const [page, setPage] = useState(1);
   const perPage = 10;
 
+  // Load bookings from API
+  const loadBookings = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await adminApi.getBookings(token);
+      setBookings(data.map(mapApiBooking));
+    } catch {
+      setError("Could not load bookings.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // Initial load — bookings + rooms (rooms power the New Booking dropdown)
+  useEffect(() => {
+    loadBookings();
+    publicApi.getRooms()
+      .then(setRooms)
+      .catch(() => { /* rooms are only needed for the modal; ignore here */ });
+  }, [loadBookings]);
+
+  const roomFilterOptions = ["All Rooms", ...rooms.map(r => r.name)];
+
   const filtered = bookings.filter((b) => {
     const q = search.toLowerCase();
     const matchSearch = !q || b.name.toLowerCase().includes(q) || b.email.toLowerCase().includes(q) || b.phone.includes(q) || b.room.toLowerCase().includes(q);
-    const matchRoom   = roomFilter   === "All Rooms"   || b.room === roomFilter;
-    const matchStatus = statusFilter === "All Status"  || b.status === statusFilter.toLowerCase();
+    const matchRoom = roomFilter === "All Rooms" || b.room === roomFilter;
+    const matchStatus = statusFilter === "All Status" || b.status === statusFilter.toLowerCase();
     const matchSource = sourceFilter === "All Sources" || b.source === sourceFilter;
-    return matchSearch && matchRoom && matchStatus && matchSource;
+    // Arrival-date range (inclusive). Strings are YYYY-MM-DD, so lexical compare works.
+    const matchArrivalFrom = !arrivalFrom || (b.checkInISO && b.checkInISO >= arrivalFrom);
+    const matchArrivalTo = !arrivalTo || (b.checkInISO && b.checkInISO <= arrivalTo);
+    return matchSearch && matchRoom && matchStatus && matchSource && matchArrivalFrom && matchArrivalTo;
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const paginated  = filtered.slice((page - 1) * perPage, page * perPage);
+  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
 
   const totalBookings = bookings.length;
-  const confirmed     = bookings.filter(b => b.status === "confirmed").length;
-  const pending       = bookings.filter(b => b.status === "pending").length;
-  const cancelled     = bookings.filter(b => b.status === "cancelled").length;
-  const revenue       = bookings.filter(b => b.status === "confirmed")
+  const confirmed = bookings.filter(b => b.status === "confirmed").length;
+  const pending = bookings.filter(b => b.status === "pending").length;
+  const cancelled = bookings.filter(b => b.status === "cancelled").length;
+  const revenue = bookings.filter(b => b.status === "confirmed")
     .reduce((sum, b) => sum + parseFloat(b.total.replace("€", "").replace(",", "")), 0);
+
+  const pct = (n) => (totalBookings ? Math.round((n / totalBookings) * 100) : 0);
 
   const handleReset = () => {
     setSearch(""); setArrivalFrom(""); setArrivalTo("");
@@ -424,29 +543,46 @@ export default function BookingsPage() {
     setPage(1);
   };
 
-  const handleSaveBooking = (form, nights, total) => {
-    const checkinFmt  = formatDate(form.checkin);
-    const checkoutFmt = formatDate(form.checkout);
-    const pricePerNight = ROOM_PRICES[form.room]?.price || 0;
-    const newBooking = {
-      id:         genId(bookings),
-      created:    new Date().toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }),
-      name:       form.name,
-      email:      form.email,
-      phone:      form.phone,
-      room:       form.room,
-      roomSub:    "",
-      dates:      `${checkinFmt} – ${checkoutFmt}`,
-      nights,
-      guests:     form.guests,
-      source:     form.source,
-      sourceType: sourceTypeOf(form.source),
-      total:      total !== null ? `€${total.toFixed(2)}` : "€0.00",
-      perNight:   `€${pricePerNight}.00 / night`,
-      status:     form.status,
-    };
-    setBookings(prev => [newBooking, ...prev]);
-    setPage(1);
+  // Change a booking's status via PATCH, then update local state
+  const handleStatusChange = async (uuid, newStatus) => {
+    try {
+      await adminApi.updateBookingStatus(token, uuid, newStatus);
+      setBookings(prev => prev.map(b => b.uuid === uuid ? { ...b, status: newStatus } : b));
+    } catch {
+      alert("Could not update booking status. Please try again.");
+    }
+  };
+
+  // Save a new booking via the admin endpoint (honors source + status), then reload
+  const handleSaveBooking = async (form) => {
+    const { adults, children } = parseGuests(form.guests);
+    const nameParts = form.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || form.name;
+    const lastName = nameParts.slice(1).join(" ") || "-";
+
+    try {
+      await adminApi.createBooking(token, {
+        roomId: form.room,            // UUID from the rooms dropdown
+        checkIn: form.checkin,         // already YYYY-MM-DD from date input
+        checkOut: form.checkout,
+        adults,
+        children,
+        firstName,
+        lastName,
+        email: form.email,
+        phone: form.phone,
+        includeBreakfast: false,
+        specialRequests: form.notes || null,
+        source: form.source,           // admin-chosen source (Booking.com / Website / Phone / Email)
+        status: form.status,           // admin-chosen status (confirmed / pending / cancelled)
+        extraBedTier: form.extraBedTier || "none",  // none / child_0_5 / child_6_15 / adult_16
+      });
+      await loadBookings();
+      setPage(1);
+      return true;
+    } catch (err) {
+      return err.message || "Could not save booking. Please try again.";
+    }
   };
 
   return (
@@ -470,8 +606,8 @@ export default function BookingsPage() {
           <div className="bp-topbar__right">
             <button className="bp-topbar__notif" aria-label="Notifications">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
               <span className="bp-topbar__badge">3</span>
             </button>
@@ -482,7 +618,7 @@ export default function BookingsPage() {
                 <span className="bp-topbar__role">Administrator</span>
               </div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9"/>
+                <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
           </div>
@@ -500,17 +636,17 @@ export default function BookingsPage() {
             <div className="bp-page-actions">
               <button className="bp-btn bp-btn--outline">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 Import Bookings (Excel)
               </button>
               <button className="bp-btn bp-btn--primary" onClick={() => setShowModal(true)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="16"/>
-                  <line x1="8" y1="12" x2="16" y2="12"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
                 </svg>
                 New Booking
               </button>
@@ -521,7 +657,7 @@ export default function BookingsPage() {
           <div className="bp-filters">
             <div className="bp-filters__search">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input type="text" className="bp-filters__input" placeholder="Search by guest name, room, email, phone..."
                 value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
@@ -529,16 +665,16 @@ export default function BookingsPage() {
             <div className="bp-filters__group">
               <div className="bp-filter-field">
                 <label className="bp-filter-label">ARRIVAL FROM</label>
-                <input type="date" className="bp-filter-date" value={arrivalFrom} onChange={e => setArrivalFrom(e.target.value)} />
+                <input type="date" className="bp-filter-date" value={arrivalFrom} onChange={e => { setArrivalFrom(e.target.value); setPage(1); }} />
               </div>
               <div className="bp-filter-field">
                 <label className="bp-filter-label">ARRIVAL TO</label>
-                <input type="date" className="bp-filter-date" value={arrivalTo} onChange={e => setArrivalTo(e.target.value)} />
+                <input type="date" className="bp-filter-date" value={arrivalTo} onChange={e => { setArrivalTo(e.target.value); setPage(1); }} />
               </div>
               <div className="bp-filter-field">
                 <label className="bp-filter-label">ROOM</label>
                 <select className="bp-filter-select" value={roomFilter} onChange={e => { setRoomFilter(e.target.value); setPage(1); }}>
-                  {ROOMS_FILTER.map(r => <option key={r}>{r}</option>)}
+                  {roomFilterOptions.map(r => <option key={r}>{r}</option>)}
                 </select>
               </div>
               <div className="bp-filter-field">
@@ -555,8 +691,8 @@ export default function BookingsPage() {
               </div>
               <button className="bp-filter-reset" onClick={handleReset}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="1 4 1 10 7 10"/>
-                  <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+                  <polyline points="1 4 1 10 7 10" />
+                  <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
                 </svg>
                 Reset
               </button>
@@ -574,10 +710,14 @@ export default function BookingsPage() {
                 </tr>
               </thead>
               <tbody>
-                {paginated.length === 0 ? (
+                {loading ? (
+                  <tr><td colSpan={9} className="bp-table__empty">Loading bookings…</td></tr>
+                ) : error ? (
+                  <tr><td colSpan={9} className="bp-table__empty" style={{ color: "red" }}>{error}</td></tr>
+                ) : paginated.length === 0 ? (
                   <tr><td colSpan={9} className="bp-table__empty">No bookings found.</td></tr>
                 ) : paginated.map((b) => (
-                  <tr key={b.id}>
+                  <tr key={b.uuid}>
                     <td>
                       <p className="bp-booking-id">{b.id}</p>
                       <p className="bp-booking-created">{b.created}</p>
@@ -609,14 +749,16 @@ export default function BookingsPage() {
                     <td><StatusBadge status={b.status} /></td>
                     <td>
                       <div className="bp-actions">
-                        <button className="bp-action-view">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                          </svg>
-                          View
-                        </button>
-                        <button className="bp-action-more" aria-label="More options">⋮</button>
+                        <select
+                          className="bp-filter-select"
+                          value={b.status}
+                          onChange={e => handleStatusChange(b.uuid, e.target.value)}
+                          aria-label="Change status"
+                        >
+                          <option value="confirmed">Confirmed</option>
+                          <option value="pending">Pending</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
                       </div>
                     </td>
                   </tr>
@@ -628,15 +770,15 @@ export default function BookingsPage() {
           {/* ── PAGINATION ── */}
           <div className="bp-pagination">
             <span className="bp-pagination__info">
-              Showing {Math.min((page-1)*perPage+1, filtered.length)} to {Math.min(page*perPage, filtered.length)} of {filtered.length} bookings
+              Showing {filtered.length === 0 ? 0 : Math.min((page - 1) * perPage + 1, filtered.length)} to {Math.min(page * perPage, filtered.length)} of {filtered.length} bookings
             </span>
             <div className="bp-pagination__pages">
-              <button className="bp-page-btn" onClick={() => setPage(p => Math.max(1,p-1))} disabled={page===1}>‹</button>
-              {Array.from({ length: Math.min(totalPages,4) }, (_,i) => i+1).map(p => (
-                <button key={p} className={`bp-page-btn ${page===p?"bp-page-btn--active":""}`} onClick={() => setPage(p)}>{p}</button>
+              <button className="bp-page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>‹</button>
+              {Array.from({ length: Math.min(totalPages, 4) }, (_, i) => i + 1).map(p => (
+                <button key={p} className={`bp-page-btn ${page === p ? "bp-page-btn--active" : ""}`} onClick={() => setPage(p)}>{p}</button>
               ))}
               {totalPages > 4 && <span className="bp-page-ellipsis">...</span>}
-              <button className="bp-page-btn" onClick={() => setPage(p => Math.min(totalPages,p+1))} disabled={page===totalPages}>›</button>
+              <button className="bp-page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>›</button>
             </div>
             <div className="bp-pagination__perpage">
               <span>10 / page</span>
@@ -649,10 +791,10 @@ export default function BookingsPage() {
             <div className="bp-stat-foot">
               <div className="bp-stat-foot__icon bp-stat-foot__icon--gray">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
               </div>
               <div>
@@ -664,53 +806,53 @@ export default function BookingsPage() {
             <div className="bp-stat-foot">
               <div className="bp-stat-foot__icon bp-stat-foot__icon--green">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="20 6 9 17 4 12"/>
+                  <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
               <div>
                 <p className="bp-stat-foot__label">Confirmed</p>
                 <p className="bp-stat-foot__value">{confirmed}</p>
-                <p className="bp-stat-foot__sub">{Math.round((confirmed/totalBookings)*100)}%</p>
+                <p className="bp-stat-foot__sub">{pct(confirmed)}%</p>
               </div>
             </div>
             <div className="bp-stat-foot">
               <div className="bp-stat-foot__icon bp-stat-foot__icon--orange">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
               <div>
                 <p className="bp-stat-foot__label">Pending</p>
                 <p className="bp-stat-foot__value">{pending}</p>
-                <p className="bp-stat-foot__sub">{Math.round((pending/totalBookings)*100)}%</p>
+                <p className="bp-stat-foot__sub">{pct(pending)}%</p>
               </div>
             </div>
             <div className="bp-stat-foot">
               <div className="bp-stat-foot__icon bp-stat-foot__icon--red">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="15" y1="9" x2="9" y2="15"/>
-                  <line x1="9" y1="9" x2="15" y2="15"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
                 </svg>
               </div>
               <div>
                 <p className="bp-stat-foot__label">Cancelled</p>
                 <p className="bp-stat-foot__value">{cancelled}</p>
-                <p className="bp-stat-foot__sub">{Math.round((cancelled/totalBookings)*100)}%</p>
+                <p className="bp-stat-foot__sub">{pct(cancelled)}%</p>
               </div>
             </div>
             <div className="bp-stat-foot">
               <div className="bp-stat-foot__icon bp-stat-foot__icon--teal">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="12" y1="1" x2="12" y2="23"/>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
               </div>
               <div>
                 <p className="bp-stat-foot__label">Total Revenue</p>
-                <p className="bp-stat-foot__value">€{revenue.toLocaleString("de-DE",{minimumFractionDigits:2})}</p>
+                <p className="bp-stat-foot__value">€{revenue.toLocaleString("de-DE", { minimumFractionDigits: 2 })}</p>
                 <p className="bp-stat-foot__sub">Confirmed bookings</p>
               </div>
             </div>
@@ -722,6 +864,7 @@ export default function BookingsPage() {
       {/* ── MODAL ── */}
       {showModal && (
         <NewBookingModal
+          rooms={rooms}
           onClose={() => setShowModal(false)}
           onSave={handleSaveBooking}
         />

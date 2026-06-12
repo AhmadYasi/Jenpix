@@ -1,13 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../auth/AuthContext";
+import { adminApi } from "../../../api/api";
 import "./adminLogin.css";
 
 // ── Nav items (same as guest site — all links go back to public pages) ────────
 const NAV_ITEMS = [
-  { label: "Welcome",    href: "/",            active: false },
-  { label: "Room",       href: "/rooms",        dropdown: true },
-  { label: "Radebeul",   href: "/radebeul",     dropdown: true },
-  { label: "Directions", href: "/directions"   },
-  { label: "Book",       href: "/book"         },
+  { label: "Welcome", href: "/", active: false },
+  { label: "Room", href: "/rooms", dropdown: true },
+  { label: "Radebeul", href: "/radebeul", dropdown: true },
+  { label: "Directions", href: "/directions" },
+  { label: "Book", href: "/book" },
 ];
 
 // ── Background image (swap with a real hotel room photo) ─────────────────────
@@ -15,15 +18,18 @@ const BG_IMAGE =
   "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1400&q=85";
 
 export default function AdminLogin() {
-  const [username,    setUsername]    = useState("");
-  const [password,    setPassword]    = useState("");
-  const [showPass,    setShowPass]    = useState(false);
-  const [rememberMe,  setRememberMe]  = useState(false);
-  const [menuOpen,    setMenuOpen]    = useState(false);
-  const [error,       setError]       = useState("");
-  const [loading,     setLoading]     = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -33,16 +39,15 @@ export default function AdminLogin() {
     }
 
     setLoading(true);
-    // TODO: replace with real auth call
-    setTimeout(() => {
+    try {
+      const response = await adminApi.login({ username, password });
+      login(response);                 // store token + user in context/localStorage
+      navigate("/admin/dashboard");
+    } catch (err) {
+      setError("Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.");
+    } finally {
       setLoading(false);
-      // Demo: hardcoded credentials — replace with real API
-      if (username === "admin" && password === "admin123") {
-        window.location.href = "/admin/dashboard";
-      } else {
-        setError("Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.");
-      }
-    }, 800);
+    }
   };
 
   return (
@@ -83,8 +88,8 @@ export default function AdminLogin() {
             <div className="al-form__field">
               <span className="al-form__icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
               </span>
               <input
@@ -103,8 +108,8 @@ export default function AdminLogin() {
             <div className="al-form__field">
               <span className="al-form__icon" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
               </span>
               <input
@@ -125,14 +130,14 @@ export default function AdminLogin() {
               >
                 {showPass ? (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-                    <line x1="1" y1="1" x2="23" y2="23"/>
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
                   </svg>
                 ) : (
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
                 )}
               </button>
@@ -179,8 +184,8 @@ export default function AdminLogin() {
       <div className="al-security">
         <div className="al-security__icon" aria-hidden="true">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
         <p className="al-security__text">

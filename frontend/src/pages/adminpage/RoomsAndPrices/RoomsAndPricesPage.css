@@ -73,6 +73,17 @@
 }
 .rp-btn--primary { background:var(--green); border:1px solid var(--green); color:#fff; }
 .rp-btn--primary:hover { background:var(--green-dark); }
+.rp-btn:disabled,
+.rp-btn--primary:disabled {
+  background: #e8e8e8;
+  border-color: #e8e8e8;
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.rp-btn--primary:disabled:hover {
+  background: #e8e8e8;
+}
 .rp-btn--outline { background:var(--white); border:1px solid var(--border); color:var(--text); }
 .rp-btn--outline:hover { border-color:var(--green); color:var(--green); }
 .rp-btn--sm { padding:8px 14px; font-size:12px; }

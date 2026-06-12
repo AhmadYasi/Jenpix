@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../AdminSidebar";
+import { useAuth } from "../../../auth/AuthContext";
+import { adminApi } from "../../../api/api";
 import "./AdminDashboard.css";
 
-// ── Demo data ────────────────────────────────────────────────────────────────
+// ── Static demo data for availability grid (not yet backed by an endpoint) ────
 const ROOMS = ["Gutedel", "Bacchus", "Riesling", "Scheurebe", "Burgunder", "Rivaner", "Regent"];
 
-// Availability grid: 0 = available, 1 = booked, 2 = closed/blocked
 const AVAILABILITY = {
-  Gutedel:   [0, 1, 1, 0, 0, 0, 1, 0],
-  Bacchus:   [0, 0, 0, 1, 1, 0, 0, 0],
-  Riesling:  [0, 0, 0, 0, 1, 1, 0, 0],
+  Gutedel: [0, 1, 1, 0, 0, 0, 1, 0],
+  Bacchus: [0, 0, 0, 1, 1, 0, 0, 0],
+  Riesling: [0, 0, 0, 0, 1, 1, 0, 0],
   Scheurebe: [0, 0, 2, 2, 2, 0, 0, 0],
   Burgunder: [0, 0, 0, 0, 1, 1, 0, 0],
-  Rivaner:   [0, 1, 0, 1, 0, 0, 0, 0],
-  Regent:    [0, 0, 0, 0, 0, 0, 2, 2],
+  Rivaner: [0, 1, 0, 1, 0, 0, 0, 0],
+  Regent: [0, 0, 0, 0, 0, 0, 2, 2],
 };
 
 const DAYS = [
@@ -27,64 +29,57 @@ const DAYS = [
   { day: "Fri", date: "23 May" },
 ];
 
-const RECENT_BOOKINGS = [
-  { name: "Laura Schmidt",  room: "Riesling Suite",          dates: "16 May – 18 May 2026", status: "confirmed" },
-  { name: "Thomas Müller",  room: "Gutedel Suite",           dates: "17 May – 20 May 2026", status: "confirmed" },
-  { name: "Anna Weber",     room: "Bacchus Doppelzimmer",    dates: "18 May – 21 May 2026", status: "pending"   },
-  { name: "Peter Klein",    room: "Burgunder Familien Suite", dates: "19 May – 22 May 2026", status: "confirmed" },
-  { name: "Sophie Wagner",  room: "Rivaner Einzelzimmer",    dates: "20 May – 21 May 2026", status: "confirmed" },
-];
-
-const STAT_CARDS = [
+// ── Stat card config — icons/colors/labels are static, values come from API ───
+const STAT_CARD_CONFIG = [
   {
+    key: "arrivalsToday",
     label: "Arrivals Today",
-    value: "1",
-    link:  "View details",
+    link: "View details",
     color: "green",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M16 11l-4 4-4-4M12 15V3"/>
-        <path d="M20 21H4"/>
+        <path d="M16 11l-4 4-4-4M12 15V3" />
+        <path d="M20 21H4" />
       </svg>
     ),
   },
   {
+    key: "departuresToday",
     label: "Departures Today",
-    value: "2",
-    link:  "View details",
+    link: "View details",
     color: "orange",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M8 13l4-4 4 4M12 9v12"/>
-        <path d="M20 21H4"/>
+        <path d="M8 13l4-4 4 4M12 9v12" />
+        <path d="M20 21H4" />
       </svg>
     ),
   },
   {
+    key: "occupied",
     label: "Currently Occupied",
-    value: "4 / 7",
-    sub:   "rooms",
-    link:  "View details",
+    sub: "rooms",
+    link: "View details",
     color: "teal",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
     ),
   },
   {
+    key: "upcomingBookings",
     label: "Upcoming Bookings",
-    value: "5",
-    sub:   "next 7 days",
-    link:  "View all bookings",
+    sub: "next 15 days",
+    link: "View all bookings",
     color: "blue",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8"  y1="2" x2="8"  y2="6"/>
-        <line x1="3"  y1="10" x2="21" y2="10"/>
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
       </svg>
     ),
   },
@@ -93,55 +88,55 @@ const STAT_CARDS = [
 const QUICK_ACTIONS = [
   {
     label: "New Booking",
-    desc:  "Create a manual booking",
+    desc: "Create a manual booking",
     color: "green",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <circle cx="12" cy="12" r="9"/>
-        <line x1="12" y1="8" x2="12" y2="16"/>
-        <line x1="8"  y1="12" x2="16" y2="12"/>
+        <circle cx="12" cy="12" r="9" />
+        <line x1="12" y1="8" x2="12" y2="16" />
+        <line x1="8" y1="12" x2="16" y2="12" />
       </svg>
     ),
   },
   {
     label: "Block Dates / Room",
-    desc:  "Close room for specific dates",
+    desc: "Close room for specific dates",
     color: "green",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/>
-        <line x1="8"  y1="2" x2="8"  y2="6"/>
-        <line x1="3"  y1="10" x2="21" y2="10"/>
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
       </svg>
     ),
   },
   {
     label: "Edit Room Prices",
-    desc:  "Update prices & extras",
+    desc: "Update prices & extras",
     color: "green",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-        <line x1="7" y1="7" x2="7.01" y2="7"/>
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+        <line x1="7" y1="7" x2="7.01" y2="7" />
       </svg>
     ),
   },
   {
     label: "Sync with Booking.com",
-    desc:  "Manual sync now",
+    desc: "Manual sync now",
     color: "green",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <polyline points="1 4 1 10 7 10"/>
-        <polyline points="23 20 23 14 17 14"/>
-        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>
+        <polyline points="1 4 1 10 7 10" />
+        <polyline points="23 20 23 14 17 14" />
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15" />
       </svg>
     ),
   },
 ];
 
-// ── Helper ───────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 function cellClass(val) {
   if (val === 1) return "ad-avail__cell ad-avail__cell--booked";
   if (val === 2) return "ad-avail__cell ad-avail__cell--closed";
@@ -149,16 +144,47 @@ function cellClass(val) {
 }
 
 function StatusBadge({ status }) {
-  return (
-    <span className={`ad-badge ad-badge--${status}`}>
-      {status === "confirmed" ? "Confirmed" : "Pending"}
-    </span>
-  );
+  const label = status.charAt(0).toUpperCase() + status.slice(1);
+  return <span className={`ad-badge ad-badge--${status}`}>{label}</span>;
+}
+
+function formatDateRange(checkIn, checkOut) {
+  const opts = { day: "numeric", month: "short", year: "numeric" };
+  const ci = new Date(checkIn).toLocaleDateString("en-GB", opts);
+  const co = new Date(checkOut).toLocaleDateString("en-GB", opts);
+  return `${ci} – ${co}`;
 }
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const { token } = useAuth();
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    adminApi.getDashboardStats(token)
+      .then(data => setStats(data))
+      .catch(() => setError("Could not load dashboard data."))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  // Build stat card values from fetched stats
+  function statValue(key) {
+    if (!stats) return "—";
+    switch (key) {
+      case "arrivalsToday": return String(stats.arrivalsToday);
+      case "departuresToday": return String(stats.departuresToday);
+      case "occupied": return `${stats.occupiedRooms} / ${stats.totalRooms}`;
+      case "upcomingBookings": return String(stats.upcomingBookings);
+      default: return "—";
+    }
+  }
+
+  const recentBookings = stats?.recentBookings || [];
 
   return (
     <div className="ad-layout">
@@ -189,8 +215,8 @@ export default function AdminDashboard() {
           <div className="ad-topbar__right">
             <button className="ad-topbar__notif" aria-label="Notifications">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
               <span className="ad-topbar__badge">3</span>
             </button>
@@ -201,7 +227,7 @@ export default function AdminDashboard() {
                 <span className="ad-topbar__role">Administrator</span>
               </div>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 12 15 18 9"/>
+                <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
           </div>
@@ -212,20 +238,26 @@ export default function AdminDashboard() {
 
           {/* Date row */}
           <div className="ad-date-row">
-            <span className="ad-date-row__text">Friday, 16 May 2026</span>
+            <span className="ad-date-row__text">
+              {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+            </span>
             <button className="ad-date-row__icon" aria-label="Open calendar">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8"  y1="2" x2="8"  y2="6"/>
-                <line x1="3"  y1="10" x2="21" y2="10"/>
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             </button>
           </div>
 
+          {error && (
+            <p style={{ color: "red", padding: "12px 0" }}>{error}</p>
+          )}
+
           {/* ── STAT CARDS ──────────────────────────────────────────────── */}
           <div className="ad-stats">
-            {STAT_CARDS.map((card) => (
+            {STAT_CARD_CONFIG.map((card) => (
               <div key={card.label} className="ad-stat-card">
                 <div className="ad-stat-card__header">
                   <p className="ad-stat-card__label">{card.label}</p>
@@ -233,7 +265,9 @@ export default function AdminDashboard() {
                     {card.icon}
                   </div>
                 </div>
-                <p className="ad-stat-card__value">{card.value}</p>
+                <p className="ad-stat-card__value">
+                  {loading ? "…" : statValue(card.key)}
+                </p>
                 {card.sub && <p className="ad-stat-card__sub">{card.sub}</p>}
                 <button className="ad-stat-card__link">
                   {card.link} <span>→</span>
@@ -253,14 +287,14 @@ export default function AdminDashboard() {
                   <button className="ad-avail__calendar-btn">View Calendar</button>
                   <button className="ad-avail__date-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6"/>
-                      <line x1="8"  y1="2" x2="8"  y2="6"/>
-                      <line x1="3"  y1="10" x2="21" y2="10"/>
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
                     </svg>
                     16 May – 23 May 2026
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="6 9 12 15 18 9"/>
+                      <polyline points="6 9 12 15 18 9" />
                     </svg>
                   </button>
                 </div>
@@ -295,18 +329,18 @@ export default function AdminDashboard() {
 
               {/* Legend */}
               <div className="ad-avail__legend">
-                <span><span className="ad-legend-dot ad-legend-dot--free"/>Available</span>
-                <span><span className="ad-legend-dot ad-legend-dot--booked"/>Booked</span>
-                <span><span className="ad-legend-dot ad-legend-dot--closed"/>Closed / Blocked</span>
+                <span><span className="ad-legend-dot ad-legend-dot--free" />Available</span>
+                <span><span className="ad-legend-dot ad-legend-dot--booked" />Booked</span>
+                <span><span className="ad-legend-dot ad-legend-dot--closed" />Closed / Blocked</span>
               </div>
 
               {/* Manage button */}
-              <button className="ad-avail__manage-btn">
+              <button className="ad-avail__manage-btn" onClick={() => navigate("/admin/availability")}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8"  y1="2" x2="8"  y2="6"/>
-                  <line x1="3"  y1="10" x2="21" y2="10"/>
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 Manage Availability
               </button>
@@ -316,21 +350,29 @@ export default function AdminDashboard() {
             <div className="ad-recent">
               <div className="ad-recent__header">
                 <h2 className="ad-recent__title">Recent Bookings</h2>
-                <button className="ad-recent__view-all">View all</button>
+                <button className="ad-recent__view-all" onClick={() => navigate("/admin/bookings")}>
+                  View all
+                </button>
               </div>
               <div className="ad-recent__list">
-                {RECENT_BOOKINGS.map((b, i) => (
-                  <div key={i} className="ad-recent__item">
-                    <div className="ad-recent__info">
-                      <p className="ad-recent__name">{b.name}</p>
-                      <p className="ad-recent__room">{b.room}</p>
-                      <p className="ad-recent__dates">{b.dates}</p>
+                {loading ? (
+                  <p style={{ padding: "16px", color: "#888" }}>Loading…</p>
+                ) : recentBookings.length === 0 ? (
+                  <p style={{ padding: "16px", color: "#888" }}>No recent bookings.</p>
+                ) : (
+                  recentBookings.map((b, i) => (
+                    <div key={i} className="ad-recent__item">
+                      <div className="ad-recent__info">
+                        <p className="ad-recent__name">{b.guestName}</p>
+                        <p className="ad-recent__room">{b.roomName}</p>
+                        <p className="ad-recent__dates">{formatDateRange(b.checkIn, b.checkOut)}</p>
+                      </div>
+                      <StatusBadge status={b.status} />
                     </div>
-                    <StatusBadge status={b.status} />
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
-              <button className="ad-recent__footer-link">
+              <button className="ad-recent__footer-link" onClick={() => navigate("/admin/bookings")}>
                 View all bookings →
               </button>
             </div>
